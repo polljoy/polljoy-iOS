@@ -190,3 +190,26 @@ If you issue a virtual currency amount to user, you MUST implement this method t
  
 -
 #### Got questions? Email us at help@polljoy.com
+
+## Version History
+
+### Version 1.4.2
+ - bug fix
+
+### Version 1.4.1
+ - bug fix in pollId value
+
+### Version 1.4
+ - update API spec
+
+### Version 1.3
+ - change API end point to SSL, fix display problem in long question and long answer
+
+### Version 1.2
+ - add session monitor when requesting poll
+
+### Version 1.1, 2014/04/15
+ - fix a bug in background thread when there is only one poll without default image setup
+
+### Version 1.0, 2014/04/14
+ - initial release
