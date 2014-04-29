@@ -211,8 +211,8 @@ If you issue a virtual currency amount to user, you MUST implement this method t
 ### Version 1.2
  - add session monitor when requesting poll
 
-### Version 1.1, 2014/04/15
+### Version 1.1
  - fix a bug in background thread when there is only one poll without default image setup
 
-### Version 1.0, 2014/04/14
+### Version 1.0
  - initial release
