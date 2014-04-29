@@ -1,0 +1,21 @@
+//
+//  Prefix header
+//
+//  The contents of this file are implicitly included at the beginning of every source file.
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+    #import <UIKit/UIKit.h>
+    #import "PJDebugUtil.h"
+    #import "PJPollView.h"
+    #import "PolljoyCore.h"
+    #import "PJPollView.h"
+
+    #define IS_IPHONE [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone
+    #define IS_HEIGHT_GTE_568 [[UIScreen mainScreen ] bounds].size.height >= 568.0f
+    #define IS_RETINA ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] && ([UIScreen mainScreen].scale == 2.0))
+    #define IOS7_DELTA_HEIGHT (([[[UIDevice currentDevice] systemVersion] floatValue] >= 7) ? 20:0)
+    #define IS_IOS7 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
+    #define DEVICE_SIZE [[[[UIApplication sharedApplication] keyWindow] rootViewController].view convertRect:[[UIScreen mainScreen] bounds] fromView:nil].size
+#endif

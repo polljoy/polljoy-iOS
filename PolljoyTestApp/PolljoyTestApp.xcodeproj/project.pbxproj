@@ -1,0 +1,570 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0A1CF69D18F56B2800658A68 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A1CF69C18F56B2800658A68 /* Foundation.framework */; };
+		0A1CF69F18F56B2800658A68 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A1CF69E18F56B2800658A68 /* CoreGraphics.framework */; };
+		0A1CF6A118F56B2800658A68 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A1CF6A018F56B2800658A68 /* UIKit.framework */; };
+		0A1CF6A718F56B2800658A68 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A1CF6A518F56B2800658A68 /* InfoPlist.strings */; };
+		0A1CF6A918F56B2800658A68 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1CF6A818F56B2800658A68 /* main.m */; };
+		0A1CF6AD18F56B2800658A68 /* PJAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1CF6AC18F56B2800658A68 /* PJAppDelegate.m */; };
+		0A1CF6B018F56B2800658A68 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A1CF6AE18F56B2800658A68 /* Main_iPhone.storyboard */; };
+		0A1CF6B318F56B2800658A68 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A1CF6B118F56B2800658A68 /* Main_iPad.storyboard */; };
+		0A1CF6B618F56B2800658A68 /* PJViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1CF6B518F56B2800658A68 /* PJViewController.m */; };
+		0A1CF6B818F56B2800658A68 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A1CF6B718F56B2800658A68 /* Images.xcassets */; };
+		0A1CF6BF18F56B2800658A68 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A1CF6BE18F56B2800658A68 /* XCTest.framework */; };
+		0A1CF6C018F56B2800658A68 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A1CF69C18F56B2800658A68 /* Foundation.framework */; };
+		0A1CF6C118F56B2800658A68 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A1CF6A018F56B2800658A68 /* UIKit.framework */; };
+		0A1CF6C918F56B2800658A68 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A1CF6C718F56B2800658A68 /* InfoPlist.strings */; };
+		0A1CF6CB18F56B2800658A68 /* PolljoyTestAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1CF6CA18F56B2800658A68 /* PolljoyTestAppTests.m */; };
+		0A1CF6E318F56BCC00658A68 /* libPolljoy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A1CF6DC18F56B4500658A68 /* libPolljoy.a */; };
+		0A1CF6E618F56C6000658A68 /* Polljoy.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0A1CF6E018F56B4500658A68 /* Polljoy.bundle */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0A1CF6C218F56B2800658A68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0A1CF69118F56B2700658A68 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0A1CF69818F56B2800658A68;
+			remoteInfo = PolljoyTestApp;
+		};
+		0A1CF6DB18F56B4500658A68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0A1CF6D418F56B4500658A68 /* PolljoySDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0A1CF62718F55AF300658A68;
+			remoteInfo = Polljoy;
+		};
+		0A1CF6DF18F56B4500658A68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0A1CF6D418F56B4500658A68 /* PolljoySDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0A1CF67A18F5663C00658A68;
+			remoteInfo = PolljoyResources;
+		};
+		0A1CF6E118F56BA000658A68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0A1CF6D418F56B4500658A68 /* PolljoySDK.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 0A1CF62618F55AF300658A68;
+			remoteInfo = Polljoy;
+		};
+		0A1CF6E418F56C2D00658A68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0A1CF6D418F56B4500658A68 /* PolljoySDK.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 0A1CF67918F5663C00658A68;
+			remoteInfo = PolljoyResources;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0A1CF69918F56B2800658A68 /* PolljoyTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PolljoyTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A1CF69C18F56B2800658A68 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		0A1CF69E18F56B2800658A68 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		0A1CF6A018F56B2800658A68 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		0A1CF6A418F56B2800658A68 /* PolljoyTestApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PolljoyTestApp-Info.plist"; sourceTree = "<group>"; };
+		0A1CF6A618F56B2800658A68 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0A1CF6A818F56B2800658A68 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		0A1CF6AA18F56B2800658A68 /* PolljoyTestApp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PolljoyTestApp-Prefix.pch"; sourceTree = "<group>"; };
+		0A1CF6AB18F56B2800658A68 /* PJAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PJAppDelegate.h; sourceTree = "<group>"; };
+		0A1CF6AC18F56B2800658A68 /* PJAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PJAppDelegate.m; sourceTree = "<group>"; };
+		0A1CF6AF18F56B2800658A68 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
+		0A1CF6B218F56B2800658A68 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
+		0A1CF6B418F56B2800658A68 /* PJViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PJViewController.h; sourceTree = "<group>"; };
+		0A1CF6B518F56B2800658A68 /* PJViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PJViewController.m; sourceTree = "<group>"; };
+		0A1CF6B718F56B2800658A68 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		0A1CF6BD18F56B2800658A68 /* PolljoyTestAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PolljoyTestAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A1CF6BE18F56B2800658A68 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		0A1CF6C618F56B2800658A68 /* PolljoyTestAppTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PolljoyTestAppTests-Info.plist"; sourceTree = "<group>"; };
+		0A1CF6C818F56B2800658A68 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0A1CF6CA18F56B2800658A68 /* PolljoyTestAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PolljoyTestAppTests.m; sourceTree = "<group>"; };
+		0A1CF6D418F56B4500658A68 /* PolljoySDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PolljoySDK.xcodeproj; path = ../PolljoySDK/PolljoySDK.xcodeproj; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0A1CF69618F56B2800658A68 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A1CF6E318F56BCC00658A68 /* libPolljoy.a in Frameworks */,
+				0A1CF69F18F56B2800658A68 /* CoreGraphics.framework in Frameworks */,
+				0A1CF6A118F56B2800658A68 /* UIKit.framework in Frameworks */,
+				0A1CF69D18F56B2800658A68 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0A1CF6BA18F56B2800658A68 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A1CF6BF18F56B2800658A68 /* XCTest.framework in Frameworks */,
+				0A1CF6C118F56B2800658A68 /* UIKit.framework in Frameworks */,
+				0A1CF6C018F56B2800658A68 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0A1CF69018F56B2700658A68 = {
+			isa = PBXGroup;
+			children = (
+				0A1CF6A218F56B2800658A68 /* PolljoyTestApp */,
+				0A1CF6C418F56B2800658A68 /* PolljoyTestAppTests */,
+				0A1CF69B18F56B2800658A68 /* Frameworks */,
+				0A1CF69A18F56B2800658A68 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0A1CF69A18F56B2800658A68 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0A1CF69918F56B2800658A68 /* PolljoyTestApp.app */,
+				0A1CF6BD18F56B2800658A68 /* PolljoyTestAppTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0A1CF69B18F56B2800658A68 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0A1CF6D418F56B4500658A68 /* PolljoySDK.xcodeproj */,
+				0A1CF69C18F56B2800658A68 /* Foundation.framework */,
+				0A1CF69E18F56B2800658A68 /* CoreGraphics.framework */,
+				0A1CF6A018F56B2800658A68 /* UIKit.framework */,
+				0A1CF6BE18F56B2800658A68 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		0A1CF6A218F56B2800658A68 /* PolljoyTestApp */ = {
+			isa = PBXGroup;
+			children = (
+				0A1CF6AB18F56B2800658A68 /* PJAppDelegate.h */,
+				0A1CF6AC18F56B2800658A68 /* PJAppDelegate.m */,
+				0A1CF6AE18F56B2800658A68 /* Main_iPhone.storyboard */,
+				0A1CF6B118F56B2800658A68 /* Main_iPad.storyboard */,
+				0A1CF6B418F56B2800658A68 /* PJViewController.h */,
+				0A1CF6B518F56B2800658A68 /* PJViewController.m */,
+				0A1CF6B718F56B2800658A68 /* Images.xcassets */,
+				0A1CF6A318F56B2800658A68 /* Supporting Files */,
+			);
+			path = PolljoyTestApp;
+			sourceTree = "<group>";
+		};
+		0A1CF6A318F56B2800658A68 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0A1CF6A418F56B2800658A68 /* PolljoyTestApp-Info.plist */,
+				0A1CF6A518F56B2800658A68 /* InfoPlist.strings */,
+				0A1CF6A818F56B2800658A68 /* main.m */,
+				0A1CF6AA18F56B2800658A68 /* PolljoyTestApp-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0A1CF6C418F56B2800658A68 /* PolljoyTestAppTests */ = {
+			isa = PBXGroup;
+			children = (
+				0A1CF6CA18F56B2800658A68 /* PolljoyTestAppTests.m */,
+				0A1CF6C518F56B2800658A68 /* Supporting Files */,
+			);
+			path = PolljoyTestAppTests;
+			sourceTree = "<group>";
+		};
+		0A1CF6C518F56B2800658A68 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0A1CF6C618F56B2800658A68 /* PolljoyTestAppTests-Info.plist */,
+				0A1CF6C718F56B2800658A68 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0A1CF6D518F56B4500658A68 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0A1CF6DC18F56B4500658A68 /* libPolljoy.a */,
+				0A1CF6E018F56B4500658A68 /* Polljoy.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0A1CF69818F56B2800658A68 /* PolljoyTestApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0A1CF6CE18F56B2800658A68 /* Build configuration list for PBXNativeTarget "PolljoyTestApp" */;
+			buildPhases = (
+				0A1CF69518F56B2800658A68 /* Sources */,
+				0A1CF69618F56B2800658A68 /* Frameworks */,
+				0A1CF69718F56B2800658A68 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0A1CF6E518F56C2D00658A68 /* PBXTargetDependency */,
+				0A1CF6E218F56BA000658A68 /* PBXTargetDependency */,
+			);
+			name = PolljoyTestApp;
+			productName = PolljoyTestApp;
+			productReference = 0A1CF69918F56B2800658A68 /* PolljoyTestApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0A1CF6BC18F56B2800658A68 /* PolljoyTestAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0A1CF6D118F56B2800658A68 /* Build configuration list for PBXNativeTarget "PolljoyTestAppTests" */;
+			buildPhases = (
+				0A1CF6B918F56B2800658A68 /* Sources */,
+				0A1CF6BA18F56B2800658A68 /* Frameworks */,
+				0A1CF6BB18F56B2800658A68 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0A1CF6C318F56B2800658A68 /* PBXTargetDependency */,
+			);
+			name = PolljoyTestAppTests;
+			productName = PolljoyTestAppTests;
+			productReference = 0A1CF6BD18F56B2800658A68 /* PolljoyTestAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0A1CF69118F56B2700658A68 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = PJ;
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Grand Heart Ltd";
+				TargetAttributes = {
+					0A1CF6BC18F56B2800658A68 = {
+						TestTargetID = 0A1CF69818F56B2800658A68;
+					};
+				};
+			};
+			buildConfigurationList = 0A1CF69418F56B2700658A68 /* Build configuration list for PBXProject "PolljoyTestApp" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0A1CF69018F56B2700658A68;
+			productRefGroup = 0A1CF69A18F56B2800658A68 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 0A1CF6D518F56B4500658A68 /* Products */;
+					ProjectRef = 0A1CF6D418F56B4500658A68 /* PolljoySDK.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				0A1CF69818F56B2800658A68 /* PolljoyTestApp */,
+				0A1CF6BC18F56B2800658A68 /* PolljoyTestAppTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		0A1CF6DC18F56B4500658A68 /* libPolljoy.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libPolljoy.a;
+			remoteRef = 0A1CF6DB18F56B4500658A68 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0A1CF6E018F56B4500658A68 /* Polljoy.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = Polljoy.bundle;
+			remoteRef = 0A1CF6DF18F56B4500658A68 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0A1CF69718F56B2800658A68 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A1CF6B318F56B2800658A68 /* Main_iPad.storyboard in Resources */,
+				0A1CF6B818F56B2800658A68 /* Images.xcassets in Resources */,
+				0A1CF6B018F56B2800658A68 /* Main_iPhone.storyboard in Resources */,
+				0A1CF6A718F56B2800658A68 /* InfoPlist.strings in Resources */,
+				0A1CF6E618F56C6000658A68 /* Polljoy.bundle in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0A1CF6BB18F56B2800658A68 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A1CF6C918F56B2800658A68 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0A1CF69518F56B2800658A68 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A1CF6AD18F56B2800658A68 /* PJAppDelegate.m in Sources */,
+				0A1CF6B618F56B2800658A68 /* PJViewController.m in Sources */,
+				0A1CF6A918F56B2800658A68 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0A1CF6B918F56B2800658A68 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A1CF6CB18F56B2800658A68 /* PolljoyTestAppTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0A1CF6C318F56B2800658A68 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0A1CF69818F56B2800658A68 /* PolljoyTestApp */;
+			targetProxy = 0A1CF6C218F56B2800658A68 /* PBXContainerItemProxy */;
+		};
+		0A1CF6E218F56BA000658A68 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Polljoy;
+			targetProxy = 0A1CF6E118F56BA000658A68 /* PBXContainerItemProxy */;
+		};
+		0A1CF6E518F56C2D00658A68 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = PolljoyResources;
+			targetProxy = 0A1CF6E418F56C2D00658A68 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		0A1CF6A518F56B2800658A68 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0A1CF6A618F56B2800658A68 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		0A1CF6AE18F56B2800658A68 /* Main_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0A1CF6AF18F56B2800658A68 /* Base */,
+			);
+			name = Main_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		0A1CF6B118F56B2800658A68 /* Main_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0A1CF6B218F56B2800658A68 /* Base */,
+			);
+			name = Main_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+		0A1CF6C718F56B2800658A68 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0A1CF6C818F56B2800658A68 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		0A1CF6CC18F56B2800658A68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0A1CF6CD18F56B2800658A68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0A1CF6CF18F56B2800658A68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PolljoyTestApp/PolljoyTestApp-Prefix.pch";
+				INFOPLIST_FILE = "PolljoyTestApp/PolljoyTestApp-Info.plist";
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		0A1CF6D018F56B2800658A68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PolljoyTestApp/PolljoyTestApp-Prefix.pch";
+				INFOPLIST_FILE = "PolljoyTestApp/PolljoyTestApp-Info.plist";
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		0A1CF6D218F56B2800658A68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/PolljoyTestApp.app/PolljoyTestApp";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PolljoyTestApp/PolljoyTestApp-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "PolljoyTestAppTests/PolljoyTestAppTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		0A1CF6D318F56B2800658A68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/PolljoyTestApp.app/PolljoyTestApp";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PolljoyTestApp/PolljoyTestApp-Prefix.pch";
+				INFOPLIST_FILE = "PolljoyTestAppTests/PolljoyTestAppTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0A1CF69418F56B2700658A68 /* Build configuration list for PBXProject "PolljoyTestApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A1CF6CC18F56B2800658A68 /* Debug */,
+				0A1CF6CD18F56B2800658A68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0A1CF6CE18F56B2800658A68 /* Build configuration list for PBXNativeTarget "PolljoyTestApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A1CF6CF18F56B2800658A68 /* Debug */,
+				0A1CF6D018F56B2800658A68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0A1CF6D118F56B2800658A68 /* Build configuration list for PBXNativeTarget "PolljoyTestAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A1CF6D218F56B2800658A68 /* Debug */,
+				0A1CF6D318F56B2800658A68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0A1CF69118F56B2700658A68 /* Project object */;
+}
