@@ -1,17 +1,124 @@
-## Polljoy
 ![Picture](http://www.polljoy.com/assets/images/logo/logo.png)
-">"In-app polls made easy. Integrate in 2 lines of code.
+> In-app polls made easy. Integrate in 2 lines of code.
 
 #Polljoy iOS Integration Guide
 
 Welcome friend! This guide will get you started with polljoy, fast & easy.
 
-Got questions?  Email us at help@polljoy.com 
+Got questions?  Email us at help@polljoy.com
 
-Simple – polljoy is designed to be simple for users and especially developers. Just 2 API calls, you can get your polls running.
-Open -The polljoy API is open. The SDK comes with all source code and a test app as well as a compiled iOS framework – Polljoy.framework and the resource bundle – Polljoy.bundle You can simply install the SDK as-is to integrate the polljoy service.
-Easy – polljoy is easy to use. Check out the test App in the SDK. Test with your own user id and app id. You can see how polljoy works. 
-Flexible – the polljoy SDK comes with the required UI to present the poll and do all the tasks for you. But if you want to implement your own UI, you can. The poll data is open. Enjoy!
+-
+<b>Simple</b> – polljoy is designed to be simple for users and especially developers. Just 2 API calls, you can get your polls running.
 
-#The polljoy Admin Console
-You can setup and manage all your polls through a web interface here [link]
+<b>Open</b> -The polljoy API is open. The SDK comes with all source code and a test app as well as a compiled iOS framework – `Polljoy.framework` and the resource bundle – `Polljoy.bundle`. You can simply install the SDK as-is to integrate the polljoy service.
+
+<b>Easy</b> – polljoy is easy to use. Check out the test App in the SDK. Test with your own user id and app id. You can see how polljoy works. 
+
+<b>Flexible</b> – the polljoy SDK comes with the required UI to present the poll and do all the tasks for you. But if you want to implement your own UI, you can. The poll data is open. Enjoy!
+
+
+# The polljoy Admin Console
+You can setup and manage all your polls through a web interface here https://admin.polljoy.com
+
+
+# Setup your XCode Project
+
+1. Unzip the polljoy framework to your local drive
+2. Drag the `Polljoy.framework` & `Polljoy.bundle` to your project in Xcode 5
+3. Add the following iOS frameworks to link
+  * UIKit
+  * Foundation
+  * CoreGraphics
+
+  ### How To:
+  i. Click on your XCode project in the file browser sidebar
+  ii. Go to your XCode project’s `Build Phases` tab
+  iii. Expand `"Link Binary With Libraries"`
+  iv. Click on the `+` button and add the frameworks listed above
+  v. Check if `Polljoy.framework` is added. If not, add `Polljoy.framework` from your file browser as well.
+    ![Picture]()
+
+  ### Configure polljoy
+  #### Setup Linker Flags
+  1. Click on your Xcode projet in the file navigator sidebar
+  2. Go to your XCode project’s `Build Settings` tab
+  3. Search for `Other Linker Flags`
+  4. Double click in the blank area to the right of `Other Linker Flags` but under the “Yes” of `Link With Standard Libraries`
+  5. Add the following:
+    `-ObjC`
+  ![Picture]()
+
+  #### Add polljoy resources
+  1. Go back to your Xcode project’s `Build Phases` tab
+  2. Expand `Copy Bundle Resources`
+  3. Drag `Polljoy.bundle` in file navigator into `Copy Bundle Resources`
+  ![Picture] ()
+
+  #### Implement polljoy in Project
+  polljoy works in the background to avoid interruption to your app’s main thread.
+  
+  polljoy requires each app to register a session and obtain the **Session ID** for all communications to the API. To have best performance and integration, we recommend registering the session at application startup. You’ll need your **App ID** (they are available in the web [admin panel](https://admin.polljoy.com)
+  
+  To register a session:
+  1. Open up your app’s `AppDelegate.m` file
+  2. Under `#import "AppDelegate.h"`, import `<Polljoy/Polljoy.h>` file
+  3. Under implementation, call `Polljoy` to start session with your **App ID**
+  
+  ``` objective-c
+  #import <Polljoy/Polljoy.h>
+
+  // ...
+  - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+      // ...
+      [Polljoy startSession:@"YOUR_APP_ID"];
+      // ...
+  }
+  ```
+  
+  polljoy SDK will automatically handle all session control and all required information to get the correct poll based on your poll setup in admin panel and save your poll result for analysis. These includes the session ID, session count, time (days) since first call polljoy SDK, device ID, platform, OS version … etc. 
+
+  Each time you call `startSession`, SDK will increase the session count by 1. So, you should only call it once for each app launch to get the session count correct.
+  
+  Once the session is started, SDK will cache all app settings including the default image (if any) that you have setup in the [admin panel](https://admin.polljoy.com). After caching, there will be no operation until you request polls from polljoy service.
+
+  ### Get polls
+  After you started the session, you can get polls at any time and place you want!
+  
+  In your program logic, import `<Polljoy/Polljoy.h>` at the program you want to get polls (or you can import in your `.pch` file). Then call:
+  
+  ``` objective-c
+  // ...
+    [Polljoy getPollWithDelegate:self
+                      AppVersion:_appVersion
+                           level:_level
+                        userType:_userType];
+  // ...
+  ```
+  
+In summary:
+
+`delegate`: the instance to handle all callbacks from polljoy SDK. The delegate should conform to `PolljoyDelegate` as defined in `Polljoy.h`
+
+`appVersion`: your app’s version to be used as a poll selection criteria. This should match with your poll setting. Or set it as nil if you are not using.
+
+`Level`: if your app is a game app, this is your game level. This should match with your poll setting. Or set it as 0 if you are not using.
+
+`userType`: your app user type either **Pay** or **Non-Pay**. This is the `ENUM PJUserType` as defined in `Polljoy.h`
+
+Please check `Polljoy.h` for the type of the parameters. polljoy’s API is open. All data returned is passed back to the delegate. Delegate can use the returned poll data for their own control if needed.
+
+`NOTE: if you don’t use any poll selection criteria, you can simply call the following method and let the SDK handle everything.
+
+  ``` objective-c
+  // if you DON’T need to handle callbacks from Polljoy
+  // this will auto show the polls when all polls are ready
+      [Polljoy getPoll];
+  // ...
+  ```
+  OR
+  ``` objective-c
+  // if you need to handle callbacks from Polljoy
+    [Polljoy getPollWithDelegate:self];
+  // ..
+  ```
+  
