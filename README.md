@@ -188,3 +188,5 @@ If you issue a virtual currency amount to user, you MUST implement this method t
  
  If the poll is not mandatory, user can choose to skip the poll. You can handle this case or simply ignore it safely.
  
+-
+#### Got questions? Email us at help@polljoy.com
