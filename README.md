@@ -36,7 +36,8 @@ You can setup and manage all your polls through a web interface here https://adm
   iii. Expand `"Link Binary With Libraries"`
   iv. Click on the `+` button and add the frameworks listed above
   v. Check if `Polljoy.framework` is added. If not, add `Polljoy.framework` from your file browser as well.
-    ![Picture]()
+  
+  ![Picture](Doc/framework.png)
 
   ### Configure polljoy
   #### Setup Linker Flags
@@ -46,13 +47,15 @@ You can setup and manage all your polls through a web interface here https://adm
   4. Double click in the blank area to the right of `Other Linker Flags` but under the “Yes” of `Link With Standard Libraries`
   5. Add the following:
     `-ObjC`
-  ![Picture]()
+  
+  ![Picture](Doc/linker_flag.png)
 
   #### Add polljoy resources
   1. Go back to your Xcode project’s `Build Phases` tab
   2. Expand `Copy Bundle Resources`
   3. Drag `Polljoy.bundle` in file navigator into `Copy Bundle Resources`
-  ![Picture] ()
+  
+  ![Picture] (Doc/bundle.png)
 
 ### Implement polljoy in Project
 
