@@ -18,7 +18,7 @@
 @property (nonatomic,strong) NSString *pollText;
 @property (nonatomic,strong) NSString *type;
 @property (nonatomic,strong) NSString *priority;
-@property (nonatomic,strong) NSString *choice;
+@property (nonatomic,strong) NSString *choice;   // depricated since 1.4.3, use 'choices'
 @property (nonatomic,assign) BOOL randomOrder;
 @property (nonatomic,assign) BOOL mandatory;
 @property (nonatomic,assign) NSInteger virtualAmount;
@@ -50,5 +50,6 @@
 @property (nonatomic,assign) NSInteger pollToken;
 @property (nonatomic,strong) NSString *response;
 @property (nonatomic,assign) BOOL isReadyToShow;
-
+@property (nonatomic,strong) NSArray *choices;
+@property (nonatomic,strong) NSString *tags;
 @end

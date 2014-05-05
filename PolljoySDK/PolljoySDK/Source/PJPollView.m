@@ -121,7 +121,7 @@
         // setp poll message
         questionLabel.text = poll.pollText;
         if ([poll.type isEqualToString:@"M"]) {
-            NSArray *choices=[poll.choice componentsSeparatedByString:@","];
+            NSArray *choices=poll.choices;
             NSInteger offset=[mcButtons count] - [choices count];
             
             for (int i=0;i<[choices count];i++) {

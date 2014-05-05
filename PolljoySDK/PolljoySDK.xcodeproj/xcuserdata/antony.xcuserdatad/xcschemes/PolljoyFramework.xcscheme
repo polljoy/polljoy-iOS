@@ -38,7 +38,7 @@
       buildConfiguration = "Release"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
-      allowLocationSimulation = "YES">
+      allowLocationSimulation = "NO">
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

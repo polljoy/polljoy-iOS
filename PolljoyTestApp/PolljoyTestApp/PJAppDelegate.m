@@ -16,6 +16,7 @@
     // register your Polljoy session here.
     // check YOUR_APP_ID in Polljoy admin panel
     // ** please remember to add an app and assign to the polls you created.
+    
     [Polljoy startSession:@"YOUR_APP_ID"];
     
     return YES;

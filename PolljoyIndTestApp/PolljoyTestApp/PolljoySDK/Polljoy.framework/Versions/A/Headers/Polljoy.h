@@ -27,6 +27,9 @@
  
  2014/04/24, Antony Man - bug fix
     Version 1.4.2
+ 
+ 2014/05/05, Antony Man - added: PJPoll.choices to support ',' in multiple choices answers, added: tags as optional selection criteria
+    Version 1.4.3
  */
 
 #import <Foundation/Foundation.h>
@@ -87,6 +90,13 @@ typedef enum {
                timeSinceInstall:(NSUInteger) timeSinceInstall
                        userType:(PJUserType) userType;
 
++(void) getPollWithDelegate:(NSObject<PolljoyDelegate> *) delegate
+                 appVersion:(NSString *) version
+                      level:(NSUInteger) level
+                    session:(NSUInteger) session
+           timeSinceInstall:(NSUInteger) timeSinceInstall
+                   userType:(PJUserType) userType
+                       tags:(NSString*) tags;
 
 +(void) showPoll;
 
@@ -103,6 +113,7 @@ typedef enum {
 +(void) setDelegate:(NSObject<PolljoyDelegate> *) delegate;
 +(void) setAutoShow:(BOOL) autoshow;
 +(void) setSandboxMode:(BOOL) sandbox;
++(void) setTags:(NSString*) tags;
 
 +(PJApp *) app;
 +(NSArray *) polls;
@@ -117,5 +128,6 @@ typedef enum {
 +(NSUInteger) session;
 +(NSUInteger) timeSinceInstall;
 +(PJUserType) userType;
++(NSString *) tags;
 
 @end

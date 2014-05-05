@@ -42,6 +42,7 @@ static NSUInteger _level;
 static NSUInteger _session;
 static NSUInteger _timeSinceInstall;
 static PJUserType _userType;
+static NSString *_tags;
 static NSMutableArray *_polls;  // this must be in order
 static NSMutableDictionary *_pollsViews;
 
@@ -203,11 +204,28 @@ static NSOperationQueue *_backgroundQueue;
 
 +(void) getPollWithDelegate:(NSObject<PolljoyDelegate> *) delegate
                  appVersion:(NSString *) version
-                              level:(NSUInteger) level
-                            session:(NSUInteger) session
-                   timeSinceInstall:(NSUInteger) timeSinceInstall
-                           userType:(PJUserType) userType
+                      level:(NSUInteger) level
+                    session:(NSUInteger) session
+           timeSinceInstall:(NSUInteger) timeSinceInstall
+                   userType:(PJUserType) userType
+{
+    [[self class] getPollWithDelegate:delegate
+                           appVersion:version
+                                level:level
+                              session:session
+                     timeSinceInstall:timeSinceInstall
+                             userType:userType
+                                 tags:nil];
 
+}
+
++(void) getPollWithDelegate:(NSObject<PolljoyDelegate> *) delegate
+                 appVersion:(NSString *) version
+                      level:(NSUInteger) level
+                    session:(NSUInteger) session
+           timeSinceInstall:(NSUInteger) timeSinceInstall
+                   userType:(PJUserType) userType
+                       tags:(NSString*) tags
 {
     if (_sessionId==nil) {
         
@@ -266,6 +284,8 @@ static NSOperationQueue *_backgroundQueue;
     
     if (userType==PJPayUser) [parameters setObject:@"Pay" forKey:@"userType"];
     else [parameters setObject:@"Non-Pay" forKey:@"userType"];
+    
+    if (tags!=nil) [parameters setObject:tags forKey:@"tags"];
     
     //-- Make URL request with server
     NSURL *url = [NSURL URLWithString:[endPoint stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
@@ -353,7 +373,8 @@ static NSOperationQueue *_backgroundQueue;
                                                poll.pollToken=[[request objectForKey:@"pollToken"] integerValue];
                                                poll.response=[request objectForKey:@"response"];
                                                poll.isReadyToShow=NO;
-                                               
+                                               poll.choices=[request objectForKey:@"choices"];
+                                               poll.tags=[request objectForKey:@"tags"];
                                                
                                                // create the view
                                                PJPollView *pollView=[[PJPollView alloc] initWithPoll:poll];
@@ -549,6 +570,11 @@ static NSOperationQueue *_backgroundQueue;
     _userType = userType;
 }
 
++(void) setTags:(NSString *) tags
+{
+    _tags = tags;
+}
+
 +(void) setDelegate:(NSObject<PolljoyDelegate> *) delegate
 {
     _delegate = delegate;
@@ -619,6 +645,11 @@ static NSOperationQueue *_backgroundQueue;
 +(PJUserType) userType
 {
     return _userType;
+}
+
++(NSString *) tags
+{
+    return _tags;
 }
 
 +(NSArray *) polls
