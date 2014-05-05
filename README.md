@@ -196,6 +196,11 @@ If you issue a virtual currency amount to user, you MUST implement this method t
 
 ## Version History
 
+### Version 1.4.3
+ - support ',' in multiple choice answers
+ - added tags as selection criteria (reserved for future use)
+ - PJPoll structure updated
+ 
 ### Version 1.4.2
  - bug fix
 
