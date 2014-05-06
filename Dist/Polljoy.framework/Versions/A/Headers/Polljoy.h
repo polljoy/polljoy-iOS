@@ -30,6 +30,9 @@
  
  2014/05/05, Antony Man - added: PJPoll.choices to support ',' in multiple choices answers, added: tags as optional selection criteria
     Version 1.4.3
+ 
+ 2014/05/06, Antony Man - bug fix in rescheduling poll request (schedulePollRequest) in setting tags
+    Version 1.4.4
  */
 
 #import <Foundation/Foundation.h>

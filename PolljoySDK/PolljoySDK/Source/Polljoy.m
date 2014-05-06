@@ -198,7 +198,8 @@ static NSOperationQueue *_backgroundQueue;
                                 level:_level
                               session:_session
                      timeSinceInstall:_timeSinceInstall
-                             userType:_userType];
+                             userType:_userType
+                                 tags:_tags];
 
 }
 
@@ -235,6 +236,7 @@ static NSOperationQueue *_backgroundQueue;
         _timeSinceInstall=timeSinceInstall;
         _userType=userType;
         _delegate=delegate;
+        _tags=tags;
         
         // check if _isRegitseringSession. if yes, delay the request by 1 sec
         if (_isRegisteringSession) {
