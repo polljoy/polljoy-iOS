@@ -196,6 +196,9 @@ If you issue a virtual currency amount to user, you MUST implement this method t
 
 ## Version History
 
+### Version 1.4.5
+ - add more controls to present poll UI to handle different scenarios
+
 ### Version 1.4.4
  - bug fix in rescheduling poll request (schedulePollRequest) in setting tags
 
@@ -203,7 +206,7 @@ If you issue a virtual currency amount to user, you MUST implement this method t
  - support ',' in multiple choice answers
  - added tags as selection criteria (reserved for future use)
  - PJPoll structure updated
- 
+
 ### Version 1.4.2
  - bug fix
 
