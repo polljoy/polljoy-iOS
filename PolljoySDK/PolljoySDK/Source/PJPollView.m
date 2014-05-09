@@ -539,11 +539,12 @@
         virtualAmount.hidden=YES;
     }
     
-    [mainWindow.rootViewController.view addSubview:self];
+    UIView *rootView=[self topViewController].view ;
+    [rootView addSubview:self];
     self.frame=self.superview.bounds;
     self.center=self.superview.center;
     pollView.center=self.center;
-    [mainWindow.rootViewController.view endEditing:YES];
+    [rootView endEditing:YES];
     
     [self setNeedsDisplay];
 
@@ -684,6 +685,26 @@
 	} else {
         [self setNeedsDisplay];
 	}
+}
+
+- (UIViewController *)topViewController{
+    return [self topViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
+}
+
+- (UIViewController *)topViewController:(UIViewController *)rootViewController
+{
+    if (rootViewController.presentedViewController == nil) {
+        return rootViewController;
+    }
+    
+    if ([rootViewController.presentedViewController isKindOfClass:[UINavigationController class]]) {
+        UINavigationController *navigationController = (UINavigationController *)rootViewController.presentedViewController;
+        UIViewController *lastViewController = [[navigationController viewControllers] lastObject];
+        return [self topViewController:lastViewController];
+    }
+    
+    UIViewController *presentedViewController = (UIViewController *)rootViewController.presentedViewController;
+    return [self topViewController:presentedViewController];
 }
 
 // NOT USED

@@ -33,6 +33,9 @@
  
  2014/05/06, Antony Man - bug fix in rescheduling poll request (schedulePollRequest) in setting tags
     Version 1.4.4
+ 
+ 2014/05/08, Antony Man - add more controls to present poll UI
+    Version 1.4.5
  */
 
 #import <Foundation/Foundation.h>
