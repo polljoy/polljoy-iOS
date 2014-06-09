@@ -19,7 +19,7 @@
     IBOutlet UILabel *questionLabel;
     IBOutlet UILabel *virtualAmount;
     IBOutlet UILabel *virtualAmountRewardLabel;
-    IBOutlet UIImageView *virtualAmountImageView;
+    IBOutlet UIImageView *rewardImageView;
     IBOutlet UIView *mcView;
     IBOutlet UIButton *mcBtn1;
     IBOutlet UIButton *mcBtn2;
@@ -32,7 +32,15 @@
     
     IBOutlet UIButton *closeBtn;
     
+    IBOutlet UIView *collectView;
+    IBOutlet UIImageView *collectRewardImageView;
+    IBOutlet UILabel *collectTextLabel;
     IBOutlet UIButton *collectBtn;
+    
+    IBOutlet UIView *overlayView;
+    IBOutlet UIView *backgroundView;
+    IBOutlet UIImageView *borderImageView;
+    
     
     NSArray *mcButtons;
     
@@ -42,6 +50,16 @@
     
     BOOL userIsResponded;
     UIImage *defaultImage;
+    
+    UIImage *borderImageLandscape;
+    UIImage *borderImagePortrait;
+    UIImage *buttonImageLandscape;
+    UIImage *buttonImagePortrait;
+    
+    NSString *borderImageL;
+    NSString *borderImageP;
+    NSString *buttonImageL;
+    NSString *buttonImageP;
 }
 
 @end
@@ -73,7 +91,7 @@
 {
     util_Log(@"[%@ %@] poll: %@", _PJ_CLASS, _PJ_METHOD, poll);
     
-    self=[self initWithFrame:CGRectMake(0,0,0,0)]; // TODO: check orientation
+    self=[self initWithFrame:CGRectMake(0,0,0,0)];
     if(self) {
         [self setupView];
         
@@ -83,43 +101,39 @@
         // setup appearance
         self.backgroundColor = [UIColor clearColor];
         
-        pollView.backgroundColor = poll.backgroundColor;
-        pollView.layer.borderColor = [poll.borderColor CGColor];
-        pollView.layer.borderWidth=4.;
-        pollView.layer.cornerRadius=4.;
+        overlayView.alpha = (CGFloat) ((100.f - poll.app.overlayAlpha) / 100.f) ;
         
-        [questionLabel setTextColor:poll.fontColor];
+        backgroundView.backgroundColor = poll.app.backgroundColor;
+        backgroundView.layer.borderColor = [poll.app.borderColor CGColor];
+        backgroundView.layer.borderWidth=poll.app.borderWidth;
+        backgroundView.layer.cornerRadius=poll.app.backgroundCornerRadius;
+        backgroundView.alpha = (CGFloat) (poll.app.backgroundAlpha / 100.f);
         
-        [mcBtn1 setBackgroundColor:poll.buttonColor];
-        [mcBtn1 setTitleColor:poll.fontColor forState:UIControlStateNormal];
-        mcBtn1.hidden=YES;
-        [mcBtn2 setBackgroundColor:poll.buttonColor];
-        [mcBtn2 setTitleColor:poll.fontColor forState:UIControlStateNormal];
-        mcBtn2.hidden=YES;
-        [mcBtn3 setBackgroundColor:poll.buttonColor];
-        [mcBtn3 setTitleColor:poll.fontColor forState:UIControlStateNormal];
-        mcBtn3.hidden=YES;
-        [mcBtn4 setBackgroundColor:poll.buttonColor];
-        [mcBtn4 setTitleColor:poll.fontColor forState:UIControlStateNormal];
-        mcBtn4.hidden=YES;
+        borderImageView.alpha = (CGFloat) (poll.app.backgroundAlpha / 100.f);
         
-        [textBtn setBackgroundColor:poll.buttonColor];
-        [textBtn setTitleColor:poll.fontColor forState:UIControlStateNormal];
+        pollView.backgroundColor = [UIColor clearColor];
+        pollView.layer.cornerRadius = poll.app.backgroundCornerRadius;
         
-        [collectBtn setBackgroundColor:poll.buttonColor];
-        [collectBtn setTitleColor:poll.fontColor forState:UIControlStateNormal];
+        for (UIButton *button in [NSArray arrayWithObjects:mcBtn1,mcBtn2,mcBtn3,mcBtn4,textBtn,collectBtn,nil ] ) {
+            [self setButtonStyle:button];
+            button.hidden=YES;
+        }
+        textBtn.hidden = NO;
+        collectBtn.hidden = NO;
         
         closeBtn.hidden=poll.mandatory;
-        UIImage *closeIcon=[UIImage imageWithContentsOfFile:[[PolljoyCore frameworkBundle] pathForResource:@"btnCancel" ofType:@"png"]];
-        UIImage *maskedIcon=[closeIcon maskWithColor:poll.fontColor];
+        UIImage *closeIcon=[UIImage imageWithContentsOfFile:[[PolljoyCore frameworkBundle] pathForResource:@"closeButton" ofType:@"png"]];
+        UIImage *maskedIcon=[closeIcon maskWithColor:poll.app.fontColor];
         [closeBtn setImage:maskedIcon forState:UIControlStateNormal];
     
-        UIImage *bagIcon=[UIImage imageWithContentsOfFile:[[PolljoyCore frameworkBundle] pathForResource:@"moneyBag" ofType:@"png"]];
-        UIImage *maskedBagIcon=[bagIcon maskWithColor:poll.fontColor];
-        [virtualAmountImageView setImage:maskedBagIcon];
+        // TODO: no need to mask the color
+        UIImage *rewardImage=[UIImage imageWithContentsOfFile:[[PolljoyCore frameworkBundle] pathForResource:@"rewardImage" ofType:@"png"]];
+        [rewardImageView setImage:rewardImage];
         
         // setp poll message
+        [questionLabel setTextColor:poll.app.fontColor];
         questionLabel.text = poll.pollText;
+        
         if ([poll.type isEqualToString:@"M"]) {
             NSArray *choices=poll.choices;
             NSInteger offset=[mcButtons count] - [choices count];
@@ -133,6 +147,7 @@
             textView.hidden=YES;
         }
         else if ([poll.type isEqualToString:@"T"]) {
+            [textBtn setTitle:poll.submitButtonText forState:UIControlStateNormal];
             mcView.hidden=YES;
             textView.hidden=NO;
         }
@@ -153,7 +168,13 @@
             virtualAmountRewardLabel.hidden=YES;
         }
         
+        collectView.hidden=YES;
+        collectTextLabel.text=[NSString stringWithFormat:@"%ld",(long)poll.virtualAmount];
+        [collectTextLabel setTextColor:poll.fontColor];
+        [collectRewardImageView setImage:rewardImageView.image];
+        
         //setup image
+        poll.imagesStatus = 0;
         [self startImageDownload:poll];
         
         if ([poll.type isEqualToString:@"T"]) {
@@ -170,9 +191,66 @@
     return self;
 }
 
+-(void) setButtonStyle: (UIButton *) button {
+    [button setTitleColor:myPoll.app.buttonFontColor forState:UIControlStateNormal];
+    [button.titleLabel setNumberOfLines:2];
+    [button.titleLabel setTextAlignment:NSTextAlignmentCenter];
+    [button.titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
+    button.backgroundColor = myPoll.app.buttonColor;
+    button.layer.cornerRadius = myPoll.app.backgroundCornerRadius;
+    [button.titleLabel setFont:[UIFont systemFontOfSize:(IS_IPHONE?17:24)]];
+    
+    UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+    UIImage *buttonImage = (UIInterfaceOrientationIsLandscape(orientation)) ? buttonImageLandscape : buttonImagePortrait;
+    
+    if (buttonImage != nil) {
+        [button setBackgroundImage:buttonImage forState:UIControlStateNormal];
+        [button.imageView setContentMode:UIViewContentModeScaleAspectFill];
+        button.layer.masksToBounds = YES;
+        button.layer.cornerRadius = 0;
+        button.backgroundColor = [UIColor clearColor];
+    }
+    else {
+        if (myPoll.app.buttonShadow) {
+            button.layer.masksToBounds = NO;
+            button.layer.shadowColor = [UIColor darkGrayColor].CGColor;
+            button.layer.shadowOpacity = 0.8;
+            button.layer.shadowRadius = mcBtn1.layer.cornerRadius;
+            button.layer.shadowOffset = CGSizeMake(12.0f, 12.0f);
+        }
+        else {
+            button.layer.masksToBounds = YES;
+        }
+    }
+}
+
+-(void) setBorderImage {
+    
+    UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+    UIImage *borderImage = (UIInterfaceOrientationIsLandscape(orientation)) ? borderImageLandscape : borderImagePortrait;
+
+    if (borderImage != nil) {
+        [borderImageView setImage:borderImage];
+    }
+}
+
 -(void) setupView
 {
     self.autoresizingMask=UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    
+    overlayView =[[UIView alloc] initWithFrame:self.frame];
+    overlayView.backgroundColor=[UIColor blackColor];
+    [self addSubview:overlayView];
+    
+    backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 240, 360)];
+    backgroundView.backgroundColor = [UIColor clearColor];
+    backgroundView.layer.masksToBounds=YES;
+    [self addSubview:backgroundView];
+    
+    borderImageView = [[UIImageView alloc] initWithFrame:overlayView.frame];
+    borderImageView.backgroundColor=[UIColor clearColor];
+    [borderImageView setContentMode:UIViewContentModeScaleAspectFill];
+    [self addSubview:borderImageView];
     
     pollView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 240, 360)];
     pollView.backgroundColor=[UIColor clearColor];
@@ -181,38 +259,45 @@
     // default image
     defaultImageView=[[UIImageView alloc] initWithFrame:CGRectMake(12, 12, 112, 112)];
     defaultImageView.backgroundColor=[UIColor clearColor];
+    [defaultImageView setContentMode:UIViewContentModeScaleAspectFit];
     [pollView addSubview:defaultImageView];
     
     closeBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     [closeBtn setFrame:CGRectMake(196, 0, 44, 44)];
     [closeBtn addTarget:self action:@selector(userSkipped:) forControlEvents:UIControlEventTouchUpInside];
+    closeBtn.layer.borderWidth=20;
+    closeBtn.layer.borderColor=[[UIColor clearColor] CGColor];
+    [closeBtn setContentEdgeInsets:UIEdgeInsetsMake(closeBtn.layer.borderWidth, closeBtn.layer.borderWidth, closeBtn.layer.borderWidth, closeBtn.layer.borderWidth)]; // adjust for easy touch
     [pollView addSubview:closeBtn];
     
-    virtualAmountImageView=[[UIImageView alloc] initWithFrame:CGRectMake(320, 20, 256, 256)];
-    virtualAmountImageView.backgroundColor=[UIColor clearColor];
-    [pollView addSubview:virtualAmountImageView];
+    rewardImageView=[[UIImageView alloc] initWithFrame:CGRectMake(320, 20, 256, 256)];
+    rewardImageView.backgroundColor=[UIColor clearColor];
+    [rewardImageView setContentMode:UIViewContentModeScaleAspectFit];
+    [pollView addSubview:rewardImageView];
     
     virtualAmountRewardLabel=[[UILabel alloc] initWithFrame:CGRectMake(132, 46, 98, 67)];
     [virtualAmountRewardLabel setBackgroundColor:[UIColor clearColor]];
-    [virtualAmountRewardLabel setText:NSLocalizedString(@"Reward:", @"Reward:")];
+    [virtualAmountRewardLabel setText:NSLocalizedString(@"Earn", @"Earn")];
     [virtualAmountRewardLabel setFont:[UIFont boldSystemFontOfSize:30]];
-    [virtualAmountRewardLabel setMinimumScaleFactor:0.5];
-    [virtualAmountRewardLabel setTextAlignment:NSTextAlignmentCenter];
+    //[virtualAmountRewardLabel setMinimumScaleFactor:0.5];
+    [virtualAmountRewardLabel setTextAlignment:NSTextAlignmentLeft];
     [pollView addSubview:virtualAmountRewardLabel];
     
     virtualAmount=[[UILabel alloc] initWithFrame:CGRectMake(132, 46, 98, 67)];
     [virtualAmount setBackgroundColor:[UIColor clearColor]];
     [virtualAmount setFont:[UIFont boldSystemFontOfSize:30]];
-    [virtualAmount setMinimumScaleFactor:0.5];
-    [virtualAmount setTextAlignment:NSTextAlignmentCenter];
+    //[virtualAmount setMinimumScaleFactor:0.5];
+    [virtualAmount setTextAlignment:NSTextAlignmentLeft];
     [pollView addSubview:virtualAmount];
     
     questionLabel=[[UILabel alloc] initWithFrame:CGRectMake(12,132,218, 64)];
     [questionLabel setBackgroundColor:[UIColor clearColor]];
     [questionLabel setFont:[UIFont systemFontOfSize:24]];
-    [questionLabel setMinimumScaleFactor:0.5];
-    [questionLabel setNumberOfLines:0];   // bug in iOS6, multiple line with word wrapping doesn't work with AdjustsFontSizeToFitWidth
-    [questionLabel setAdjustsFontSizeToFitWidth:YES];
+    //[questionLabel setMinimumScaleFactor:0.5];
+    [questionLabel setNumberOfLines:3];   // bug in iOS6, multiple line with word wrapping doesn't work with AdjustsFontSizeToFitWidth
+    //[questionLabel setAdjustsFontSizeToFitWidth:YES];
+    [questionLabel setLineBreakMode:NSLineBreakByWordWrapping];
+    [questionLabel setTextAlignment:NSTextAlignmentCenter];
     [pollView addSubview:questionLabel];
     
     // Multiple Choice View
@@ -259,25 +344,26 @@
     
     [pollView addSubview:textView];
     
+    collectView=[[UIView alloc] initWithFrame:CGRectMake(0, 195, 240, 165)];
+    collectView.backgroundColor=[UIColor clearColor];
     collectBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     [collectBtn setTitle:@"Collect" forState:UIControlStateNormal];
     [collectBtn addTarget:self action:@selector(userConfirmed:) forControlEvents:UIControlEventTouchUpInside];
     [collectBtn setFrame:CGRectMake(11, 300, 218, 30)];
     collectBtn.hidden=YES;
-    [pollView addSubview:collectBtn];
+    collectRewardImageView=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
+    collectRewardImageView.backgroundColor=[UIColor clearColor];
+    collectTextLabel=[[UILabel alloc] initWithFrame:CGRectMake(132, 46, 98, 67)];
+    [collectTextLabel setBackgroundColor:[UIColor clearColor]];
+    [collectTextLabel setFont:[UIFont boldSystemFontOfSize:30]];
+    //[collectTextLabel setMinimumScaleFactor:0.5];
+    [collectTextLabel setTextAlignment:NSTextAlignmentLeft];
+    [collectView addSubview:collectTextLabel];
+    [collectView addSubview:collectRewardImageView];
+    [collectView addSubview:collectBtn];
+    [pollView addSubview:collectView];
 
-
-    
     [self addSubview:pollView];
-}
--(void) setDefaultImage
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [defaultImageView setImage:[PolljoyCore defaultImage]];
-        myPoll.isReadyToShow=YES;
-        [self.delegate PJPollViewIsReadyToShow:self poll:myPoll];
-    });
-
 }
 
 /*
@@ -289,15 +375,25 @@
 }
 */
 
+- (void)checkImageStatus{
+    if (!myPoll.isReadyToShow) {
+        
+        if (PJPollAllImageReady == myPoll.imagesStatus) {
+            myPoll.isReadyToShow=YES;
+            [self.delegate PJPollViewIsReadyToShow:self poll:myPoll];
+        }
+    }
+}
 
 - (void)startImageDownload:(PJPoll *)poll
 {
+    // cache default image
     NSString *urlString=nil;
     if ((poll.pollImageUrl!=nil) && (![poll.pollImageUrl isEqual:[NSNull null]])) {
         urlString=poll.pollImageUrl;
     }
     else if ((poll.appImageUrl!=nil) && (![poll.appImageUrl isEqual:[NSNull null]])) {
-        urlString=poll.appImageUrl;
+        urlString=poll.app.defaultImageUrl;
     }
     
     if (urlString!=nil) {
@@ -306,24 +402,228 @@
         [imageDownloader setCompletionHandler:^(UIImage * image) {
             if (image!=nil) {
                 // download success
-                [defaultImageView setImage:image];
-                
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    myPoll.isReadyToShow=YES;
-                    [self.delegate PJPollViewIsReadyToShow:self poll:myPoll];
+                    [defaultImageView setImage:image];
+                    myPoll.imagesStatus |= PJPollDefaultImageReady;
+                    [self checkImageStatus];
                 });
             }
             else {
                 //download fail, use default image and return ready
-                [self setDefaultImage];
-                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [defaultImageView setImage:[PolljoyCore defaultImage]];
+                    myPoll.imagesStatus |= PJPollDefaultImageReady;
+                    [self checkImageStatus];
+                });
             }
         }];
         
         [imageDownloader startDownload];
     }
     else {
-        [self setDefaultImage];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [defaultImageView setImage:[PolljoyCore defaultImage]];
+            myPoll.imagesStatus |= PJPollDefaultImageReady;
+            [self checkImageStatus];
+        });
+    }
+    
+    // cache reward image
+    NSString *rewardUrlString=nil;
+    if ((poll.pollRewardImageUrl!=nil) && (![poll.pollRewardImageUrl isEqual:[NSNull null]]) && ([poll.pollRewardImageUrl length] > 0)) {
+        rewardUrlString=poll.pollRewardImageUrl;
+    }
+    else if ((poll.app.rewardImageUrl!=nil) && (![poll.app.rewardImageUrl isEqual:[NSNull null]]) && ([poll.app.rewardImageUrl length] > 0)) {
+        rewardUrlString=poll.app.rewardImageUrl;
+    }
+    
+    if (rewardUrlString!=nil) {
+        PJImageDownloader *imageDownloader = [[PJImageDownloader alloc] init];
+        [imageDownloader setUrlString:rewardUrlString];
+        [imageDownloader setCompletionHandler:^(UIImage * image) {
+            if (image!=nil) {
+                // download success
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [rewardImageView setImage:image];
+                    myPoll.imagesStatus |= PJPollRewardImageReady;
+                    [self checkImageStatus];
+                });
+            }
+            else {
+                //download fail, use default image and return ready
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    myPoll.imagesStatus |= PJPollRewardImageReady;
+                    [self checkImageStatus];
+                });
+            }
+            util_Log(@"[%@ %@] completed: %@", _PJ_CLASS, _PJ_METHOD, rewardUrlString);
+        }];
+        
+        [imageDownloader startDownload];
+    }
+    else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            myPoll.imagesStatus |= PJPollRewardImageReady;
+            [self checkImageStatus];
+        });
+    }
+
+    // cache close button image
+    if ((myPoll.app.closeButtonImageUrl != nil) && (![myPoll.app.closeButtonImageUrl isEqual:[NSNull null]]) && ([myPoll.app.closeButtonImageUrl length] >0)){
+        PJImageDownloader *imageDownloader = [[PJImageDownloader alloc] init];
+        [imageDownloader setUrlString:myPoll.app.closeButtonImageUrl];
+        [imageDownloader setCompletionHandler:^(UIImage * image) {
+            if (image!=nil) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [closeBtn setImage:image forState:UIControlStateNormal];
+                    myPoll.imagesStatus |= PJPollCloseButtonImageReady;
+                    [self checkImageStatus];
+                });
+            }
+            else {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    myPoll.imagesStatus |= PJPollCloseButtonImageReady;
+                    [self checkImageStatus];
+                });
+            }
+            util_Log(@"[%@ %@] completed: %@", _PJ_CLASS, _PJ_METHOD, myPoll.app.closeButtonImageUrl);
+        }];
+        
+        [imageDownloader startDownload];
+        
+    }
+    else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            myPoll.imagesStatus |= PJPollCloseButtonImageReady;
+            [self checkImageStatus];
+        });
+    }
+    
+    // cache border and button image
+    borderImageL = nil;
+    borderImageP = nil;
+    buttonImageL = nil;
+    buttonImageP = nil;
+    
+    if (IS_IPHONE) {
+        if (IS_HEIGHT_GTE_568) {
+            // 16:9
+            borderImageL = [myPoll.app.borderImageUrl_16x9_L length] > 0 ? myPoll.app.borderImageUrl_16x9_L : nil;
+            borderImageP = [myPoll.app.borderImageUrl_16x9_P length] > 0 ? myPoll.app.borderImageUrl_16x9_P : nil;
+            buttonImageL = [myPoll.app.buttonImageUrl_16x9_L length] > 0 ? myPoll.app.buttonImageUrl_16x9_L : nil;
+            buttonImageP = [myPoll.app.buttonImageUrl_16x9_P length] > 0 ? myPoll.app.buttonImageUrl_16x9_P : nil;
+        }
+        else {
+            // 3:2
+            borderImageL = [myPoll.app.borderImageUrl_3x2_L length] > 0 ? myPoll.app.borderImageUrl_3x2_L : nil;
+            borderImageP = [myPoll.app.borderImageUrl_3x2_P length] > 0 ? myPoll.app.borderImageUrl_3x2_P : nil;
+            buttonImageL = [myPoll.app.buttonImageUrl_3x2_L length] > 0 ? myPoll.app.buttonImageUrl_3x2_L : nil;
+            buttonImageP = [myPoll.app.buttonImageUrl_3x2_P length] > 0 ? myPoll.app.buttonImageUrl_3x2_P : nil;
+        }
+    }
+    else {
+        // 4:3, iPad
+        borderImageL = [myPoll.app.borderImageUrl_4x3_L length] > 0 ? myPoll.app.borderImageUrl_4x3_L : nil;
+        borderImageP = [myPoll.app.borderImageUrl_4x3_P length] > 0 ? myPoll.app.borderImageUrl_4x3_P : nil;
+        buttonImageL = [myPoll.app.buttonImageUrl_4x3_L length] > 0 ? myPoll.app.buttonImageUrl_4x3_L : nil;
+        buttonImageP = [myPoll.app.buttonImageUrl_4x3_P length] > 0 ? myPoll.app.buttonImageUrl_4x3_P : nil;
+    }
+    
+    // border image landscape
+    if ((borderImageL != nil) && (![borderImageL isEqual:[NSNull null]])){
+        PJImageDownloader *imageDownloader0 = [[PJImageDownloader alloc] init];
+        [imageDownloader0 setUrlString:borderImageL];
+        [imageDownloader0 setCompletionHandler:^(UIImage * image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                borderImageLandscape = image;
+                myPoll.imagesStatus |= PJPollBorderLImageReady;
+                [self checkImageStatus];
+            });
+
+            util_Log(@"[%@ %@] borderImageL completed: %@", _PJ_CLASS, _PJ_METHOD, borderImageL);
+        }];
+        
+        [imageDownloader0 startDownload];
+        
+    }
+    else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            borderImageLandscape = nil;
+            myPoll.imagesStatus |= PJPollBorderLImageReady;
+            [self checkImageStatus];
+        });
+    }
+    
+    // border image portrait
+    if ((borderImageP != nil) && (![borderImageP isEqual:[NSNull null]])){
+        PJImageDownloader *imageDownloader1 = [[PJImageDownloader alloc] init];
+        [imageDownloader1 setUrlString:borderImageP];
+        [imageDownloader1 setCompletionHandler:^(UIImage * image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                borderImagePortrait = image;
+                myPoll.imagesStatus |= PJPollBorderPImageReady;
+                [self checkImageStatus];
+            });
+            util_Log(@"[%@ %@] borderImageP completed: %@", _PJ_CLASS, _PJ_METHOD, borderImageP);
+        }];
+        
+        [imageDownloader1 startDownload];
+        
+    }
+    else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            borderImagePortrait = nil;
+            myPoll.imagesStatus |= PJPollBorderPImageReady;
+            [self checkImageStatus];
+        });
+    }
+    
+    // button image landscape
+    if ((buttonImageL != nil) && (![buttonImageL isEqual:[NSNull null]])){
+        PJImageDownloader *imageDownloader2 = [[PJImageDownloader alloc] init];
+        [imageDownloader2 setUrlString:buttonImageL];
+        [imageDownloader2 setCompletionHandler:^(UIImage * image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                buttonImageLandscape = image;
+                myPoll.imagesStatus |= PJPollButtonLImageReady;
+                [self checkImageStatus];
+            });
+            util_Log(@"[%@ %@] buttonImageL completed: %@", _PJ_CLASS, _PJ_METHOD, buttonImageL);
+        }];
+        
+        [imageDownloader2 startDownload];
+        
+    }
+    else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            buttonImageLandscape = nil;
+            myPoll.imagesStatus |= PJPollButtonLImageReady;
+            [self checkImageStatus];
+        });
+    }
+
+    // button image portrait
+    if ((buttonImageP != nil) && (![buttonImageP isEqual:[NSNull null]])){
+        PJImageDownloader *imageDownloader3 = [[PJImageDownloader alloc] init];
+        [imageDownloader3 setUrlString:buttonImageP];
+        [imageDownloader3 setCompletionHandler:^(UIImage * image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                buttonImagePortrait = image;
+                myPoll.imagesStatus |= PJPollButtonPImageReady;
+                [self checkImageStatus];
+            });
+            util_Log(@"[%@ %@] buttonImageP completed: %@", _PJ_CLASS, _PJ_METHOD, buttonImageP);
+        }];
+        
+        [imageDownloader3 startDownload];
+        
+    }
+    else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            buttonImagePortrait = nil;
+            myPoll.imagesStatus |= PJPollButtonPImageReady;
+            [self checkImageStatus];
+        });
     }
 }
 
@@ -337,179 +637,370 @@
 
     // layout all subview for device orientation
     UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+    if (UIInterfaceOrientationIsLandscape(orientation)) {
+        [self layoutLandscape];
+    }
+    else {
+        [self layoutPortrait];
+    }
+    
+    overlayView.frame=self.frame;
+    borderImageView.frame=overlayView.frame;
+    pollView.center=self.center;
+    backgroundView.frame=pollView.frame;
+    backgroundView.frame = CGRectInset(backgroundView.frame, -myPoll.app.borderWidth, -myPoll.app.borderWidth); // adjust for outter border
+}
 
+-(void) layoutPortrait{
+    CGFloat baseScale;
+    CGFloat widthScale;
+    CGFloat heightScale;
+    CGFloat fontSize;
+    CGFloat rewardFontSize;
+    
+    [self setBorderImage];
+    
     if (IS_IPHONE) {
-        if (UIInterfaceOrientationIsLandscape(orientation)) {
-            [self layoutLandscapePhone];
+        if (IS_HEIGHT_GTE_568) {
+            // 16:9
+            baseScale = 1136.f / 1600.f;
+            widthScale = 0.75f;
+            heightScale = 0.78125f;
+            fontSize=IS_IPHONE?15:24;
+            rewardFontSize=IS_IPHONE?12:14;
         }
         else {
-            [self layoutPortraitPhone];
+            // 3:2
+            baseScale = 960.f / 1400.f;  // 1400 is base height reference
+            widthScale = 0.75f;
+            heightScale = 0.7292f;
+            fontSize=IS_IPHONE?15:24;
+            rewardFontSize=IS_IPHONE?12:14;
         }
     }
     else {
-        if (UIInterfaceOrientationIsLandscape(orientation)) {
-            [self layoutLandscapePad];
-        }
-        else {
-            [self layoutPortraitPad];
-        }
+        // 4:3
+        baseScale = 1024.f / 1500.f;  // 1500 is base height reference
+        widthScale = 0.729f;
+        heightScale = 0.7324f;
+        fontSize=IS_IPHONE?15:30;
+        rewardFontSize=IS_IPHONE?12:24;
     }
     
-    pollView.center=self.center;
+    CGSize baseSize = self.bounds.size;
+    CGSize innerSize = CGSizeMake(baseSize.width * widthScale, baseSize.height * heightScale);
+    
+    // default image
+    CGFloat spacer1 = innerSize.height * 0.0469;
+    CGSize pollImageSize = CGSizeMake(innerSize.height * 0.2188, innerSize.height * 0.2188);
+    
+    // close button
+    CGFloat spacer4 = innerSize.height * 0.01875;
+    CGSize closeButtonSize = CGSizeMake(innerSize.height * 0.0375 , innerSize.height * 0.0375);
+    
+    // reward
+    CGSize rewardImageSize = CGSizeMake(innerSize.height * 0.0313 , innerSize.height * 0.0313);
+    CGSize rewardTextSize = CGSizeMake(innerSize.height * 0.0625 , 14);
+    
+    // poll question
+    CGSize pollTextSize = CGSizeMake(innerSize.width * 0.8889, innerSize.height * (0.0234+0.1375+0.0234));
+    
+    // button
+    CGFloat spacer3 = innerSize.height * 0.0313;
+    CGSize buttonSize = CGSizeMake(innerSize.width * 0.8889, innerSize.height * 0.1063);
+    CGSize buttonShadowSize = CGSizeMake(innerSize.height * 0.0106, innerSize.height * 0.0106);
+    
+    // spacerx
+    CGFloat spacerX = innerSize.width * ((1 - 0.8889) / 2);
+    
+    // resize and layout poll view
+    pollView.frame = CGRectMake(0, 0, innerSize.width, innerSize.height);
+
+    defaultImageView.frame = CGRectMake((innerSize.width - pollImageSize.width)/2, spacer1, pollImageSize.width, pollImageSize.height);
+    
+    if (myPoll.app.closeButtonLocation == 0) {
+        // top left
+        closeBtn.frame = CGRectMake(spacer4 + (baseScale * myPoll.app.closeButtonOffsetX/2), spacer4 + (baseScale *myPoll.app.closeButtonOffsetY/2), closeButtonSize.width, closeButtonSize.height);
+        
+        // reward image
+        rewardImageView.frame=CGRectMake(5+defaultImageView.frame.origin.x + defaultImageView.frame.size.width, defaultImageView.frame.origin.y+defaultImageView.frame.size.height/2, rewardImageSize.width, rewardImageSize.height);
+        [virtualAmountRewardLabel sizeToFit];
+    }
+    else {
+        // top right
+        closeBtn.frame = CGRectMake(innerSize.width - (spacer4 + closeButtonSize.width + (baseScale * myPoll.app.closeButtonOffsetX/2)), spacer4 + (baseScale * myPoll.app.closeButtonOffsetY/2), closeButtonSize.width, closeButtonSize.height);
+        
+        // reward image
+        rewardImageView.frame=CGRectMake(5, defaultImageView.frame.origin.y+defaultImageView.frame.size.height/2, rewardImageSize.width, rewardImageSize.height);
+
+    }
+    // adjust frame to have bigger button for easy touch
+    closeBtn.frame = CGRectInset(closeBtn.frame, -closeBtn.layer.borderWidth, -closeBtn.layer.borderWidth);
+    
+    // reward text
+    virtualAmount.frame=CGRectMake(5 + rewardImageView.frame.origin.x + rewardImageView.frame.size.width, rewardImageView.frame.origin.y, rewardTextSize.width, rewardTextSize.height);
+    [virtualAmount setFont:[UIFont systemFontOfSize:rewardFontSize]];
+    [virtualAmount sizeToFit];
+    [virtualAmountRewardLabel setFont:[UIFont systemFontOfSize:rewardFontSize]];
+    //[virtualAmountRewardLabel setMinimumScaleFactor:0.5];
+    virtualAmountRewardLabel.frame=virtualAmount.frame;
+    virtualAmountRewardLabel.frame=CGRectMake(virtualAmountRewardLabel.frame.origin.x, virtualAmount.frame.origin.y-virtualAmountRewardLabel.frame.size.height, defaultImageView.frame.size.width, virtualAmountRewardLabel.frame.size.height);
+    [virtualAmountRewardLabel sizeToFit];
+    // adjust X
+    CGFloat x0 = (defaultImageView.frame.origin.x- (rewardImageView.frame.size.width + 5 + MAX(virtualAmount.frame.size.width,virtualAmountRewardLabel.frame.size.width)))/2;
+    x0 += (myPoll.app.closeButtonLocation == 0) ? defaultImageView.frame.size.width: 0;
+    rewardImageView.frame=CGRectOffset(rewardImageView.frame, x0, 0);
+    virtualAmount.frame=CGRectOffset(virtualAmount.frame, x0, 0);
+    virtualAmountRewardLabel.frame=CGRectOffset(virtualAmountRewardLabel.frame, x0, 0);
+    
+    // poll question
+    questionLabel.frame = CGRectMake(spacerX, defaultImageView.frame.origin.y + defaultImageView.frame.size.height, pollTextSize.width, pollTextSize.height );
+    [questionLabel setFont:[UIFont systemFontOfSize:fontSize]];
+    
+    // mc choice
+    mcView.frame = CGRectMake(0, questionLabel.frame.origin.y + questionLabel.frame.size.height, innerSize.width, 4 *( (buttonSize.height + spacer3)));
+    for (UIButton *button in [NSArray arrayWithObjects:mcBtn1,mcBtn2,mcBtn3,mcBtn4,nil ] ) {
+        [self setButtonStyle:button];
+        
+        button.layer.shadowOffset = buttonShadowSize;
+        [button.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
+    }
+    mcBtn1.frame=CGRectMake(spacerX, 0, buttonSize.width, buttonSize.height);
+    mcBtn2.frame=CGRectMake(spacerX, spacer3 + buttonSize.height, buttonSize.width, buttonSize.height);
+    mcBtn3.frame=CGRectMake(spacerX, 2 * (spacer3 + buttonSize.height), buttonSize.width, buttonSize.height);
+    mcBtn4.frame=CGRectMake(spacerX, 3 * (spacer3 + buttonSize.height), buttonSize.width, buttonSize.height);
+    
+    // text view
+    textView.frame=mcView.frame;
+    responseTextView.frame=CGRectMake(spacerX, 0, buttonSize.width, (3 * buttonSize.height) + (2 * spacer3));
+    [responseTextView setFont:[UIFont systemFontOfSize:fontSize]];
+    [self setButtonStyle:textBtn];
+    textBtn.layer.shadowOffset = buttonShadowSize;
+    [textBtn.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
+    textBtn.frame=CGRectMake(spacerX, responseTextView.frame.origin.y + responseTextView.frame.size.height + spacer3, buttonSize.width, buttonSize.height);
+
+    // collect button
+    collectView.frame=mcView.frame;
+    [collectRewardImageView setImage:rewardImageView.image];
+    [collectTextLabel setFont:[UIFont systemFontOfSize:fontSize]];
+    [collectTextLabel sizeToFit];
+    CGPoint center=responseTextView.center;
+    CGFloat y=center.y - collectRewardImageView.frame.size.height/2;
+    CGFloat x=(collectView.frame.size.width - (collectRewardImageView.frame.size.width + 5 + collectTextLabel.frame.size.width))/2;
+    collectRewardImageView.frame=CGRectMake(x, y, collectTextLabel.frame.size.height, collectTextLabel.frame.size.height);
+    collectTextLabel.frame=CGRectMake(collectRewardImageView.frame.origin.x+collectRewardImageView.frame.size.width+5, y, collectTextLabel.frame.size.width, collectTextLabel.frame.size.height);
+    [collectTextLabel setFont:[UIFont systemFontOfSize:fontSize]];
+    [self setButtonStyle:collectBtn];
+    collectBtn.layer.shadowOffset = buttonShadowSize;
+    [collectBtn.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
+    collectBtn.frame=CGRectMake(spacerX, responseTextView.frame.origin.y + responseTextView.frame.size.height + spacer3, buttonSize.width, buttonSize.height);
+
 }
 
--(void)layoutPortraitPad{
-    pollView.frame=CGRectMake(0, 0, 586, 768);
+-(void) layoutLandscape{
+    CGFloat baseScale;
+    CGFloat widthScale;
+    CGFloat heightScale;
+    CGFloat fontSize;
+    CGFloat rewardFontSize;
     
-    defaultImageView.frame=CGRectMake(20, 20, 256, 256);
+    [self setBorderImage];
     
-    closeBtn.frame=CGRectMake(532, 10, 44, 44);
+    if (IS_IPHONE) {
+        if (IS_HEIGHT_GTE_568) {
+            // 16:9
+            baseScale = 1136.f / 1600.f;  // 1600 is base height reference
+            widthScale = 0.78125f;
+            heightScale = 0.75f;
+            fontSize=IS_IPHONE?15:30;
+            rewardFontSize=IS_IPHONE?12:24;
+        }
+        else {
+            // 3:2
+            baseScale = 960.f / 1400.f;  // 1400 is base height reference
+            widthScale = 0.8125f;
+            heightScale = 0.625f;
+            fontSize=IS_IPHONE?15:30;
+            rewardFontSize=IS_IPHONE?12:24;
+        }
+    }
+    else {
+        // 4:3
+        baseScale = 1024.f / 1500.f;  // 1500 is base height reference
+        widthScale = 0.7325;
+        heightScale = 0.7292f;
+        fontSize=IS_IPHONE?15:30;
+        rewardFontSize=IS_IPHONE?12:24;
+    }
     
-    questionLabel.frame=CGRectMake(20, 314,546, 152);
-    [questionLabel setFont:[UIFont boldSystemFontOfSize:32.0]];
+    CGSize baseSize = self.bounds.size;
+    CGSize innerSize = CGSizeMake(baseSize.width * widthScale, baseSize.height * heightScale);
     
-    virtualAmountImageView.frame=CGRectMake(320, 20, 256, 256);
-    virtualAmountImageView.hidden=YES;
-    virtualAmountRewardLabel.frame=CGRectMake(320, 73, 256, 58);
-    [virtualAmountRewardLabel setFont:[UIFont boldSystemFontOfSize:60.0]];
-    [virtualAmountRewardLabel setMinimumScaleFactor:0.5];
-    virtualAmount.frame=CGRectMake(345, 139, 188, 97);
-    [virtualAmount setFont:[UIFont boldSystemFontOfSize:60.0]];
+    // default image
+    CGFloat spacer1 = innerSize.width * 0.03125;
+    CGSize pollImageSize = CGSizeMake(innerSize.width * 0.2188, innerSize.width * 0.2188);
     
-    collectBtn.frame=CGRectMake(31, 704, 525, 44);
-    [collectBtn.titleLabel setFont:[UIFont systemFontOfSize:24]];
+    // close button
+    CGFloat spacer4 = innerSize.width * 0.03125;
+    CGSize closeButtonSize = CGSizeMake(innerSize.width * 0.03125, innerSize.width * 0.03125);
     
-    mcView.frame=CGRectMake(20, 500, 546, 264);
-    mcBtn1.frame=CGRectMake(10, 20, 525, 44);
-    [mcBtn1.titleLabel setFont:[UIFont systemFontOfSize:24]];
-    mcBtn2.frame=CGRectMake(10, 81, 525, 44);
-    [mcBtn2.titleLabel setFont:[UIFont systemFontOfSize:24]];
-    mcBtn3.frame=CGRectMake(10, 139, 525, 44);
-    [mcBtn3.titleLabel setFont:[UIFont systemFontOfSize:24]];
-    mcBtn4.frame=CGRectMake(10, 200, 525, 44);
-    [mcBtn4.titleLabel setFont:[UIFont systemFontOfSize:24]];
+    // reward
+    CGSize rewardImageSize = CGSizeMake(innerSize.width * 0.0365 , innerSize.width * 0.0365);
+    CGSize rewardTextSize = CGSizeMake(innerSize.width * 0.0625 , 14);
     
-    textView.frame=CGRectMake(20, 500, 546, 248);
-    responseTextView.frame=CGRectMake(10, 20, 525, 171);
-    [responseTextView setFont:[UIFont systemFontOfSize:24]];
-    textBtn.frame=CGRectMake(10, 203, 525, 44);
-    [textBtn.titleLabel setFont:[UIFont systemFontOfSize:24]];
-}
+    // poll question
+    //CGFloat spacer2 = innerSize.height * 0.03125;
+    CGSize pollTextSize = CGSizeMake(innerSize.width * 0.6250, innerSize.height * 0.24675);
+    
+    // button
+    CGFloat spacer3 = innerSize.height * 0.0644;
+    CGSize buttonSize = CGSizeMake(innerSize.width * 0.6250, innerSize.height * 0.10);
+    CGSize buttonShadowSize = CGSizeMake(innerSize.width * 0.0106, innerSize.width * 0.0106);
+    
+    // spacerx
+    CGFloat spacerX = 0;
+    
+    // resize and layout poll view
+    pollView.frame = CGRectMake(0, 0, innerSize.width, innerSize.height);
+    
+    if (myPoll.app.closeButtonLocation == 0) {
+        defaultImageView.frame = CGRectMake(innerSize.width - (pollImageSize.width + spacer1), spacer1, pollImageSize.width, pollImageSize.height);
+    
+        // top left
+        closeBtn.frame = CGRectMake(spacer4 + (baseScale * myPoll.app.closeButtonOffsetX/2), spacer4 + (baseScale * myPoll.app.closeButtonOffsetY/2), closeButtonSize.width, closeButtonSize.height);
+        closeBtn.frame = CGRectInset(closeBtn.frame, -closeBtn.layer.borderWidth, -closeBtn.layer.borderWidth);
+        
+        // poll question
+        questionLabel.frame = CGRectMake(spacer4 + closeButtonSize.width + spacer4, spacer4, pollTextSize.width, innerSize.height - (4 * (buttonSize.height + spacer3)) - (2 * spacer4));
+        [questionLabel setFont:[UIFont systemFontOfSize:fontSize]];
+        
+        // mc choice
+        mcView.frame = CGRectMake(questionLabel.frame.origin.x, innerSize.height - 4 * (buttonSize.height + spacer3), pollTextSize.width, 4 *( (buttonSize.height + spacer3)));
+        for (UIButton *button in [NSArray arrayWithObjects:mcBtn1,mcBtn2,mcBtn3,mcBtn4,nil ] ) {
+            [self setButtonStyle:button];
+            
+            button.layer.shadowOffset = buttonShadowSize;
+            [button.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
+        }
+        mcBtn1.frame=CGRectMake(spacerX, 0, buttonSize.width, buttonSize.height);
+        mcBtn2.frame=CGRectMake(spacerX, spacer3 + buttonSize.height, buttonSize.width, buttonSize.height);
+        mcBtn3.frame=CGRectMake(spacerX, 2 * (spacer3 + buttonSize.height), buttonSize.width, buttonSize.height);
+        mcBtn4.frame=CGRectMake(spacerX, 3 * (spacer3 + buttonSize.height), buttonSize.width, buttonSize.height);
+        
+        // text view
+        textView.frame=mcView.frame;
+        responseTextView.frame=CGRectMake(spacerX, 0, buttonSize.width, (3 * buttonSize.height) + (2 * spacer3));
+        [responseTextView setFont:[UIFont systemFontOfSize:fontSize]];
+        [self setButtonStyle:textBtn];
+        textBtn.layer.shadowOffset = buttonShadowSize;
+        [textBtn.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
+        textBtn.frame=CGRectMake(spacerX, responseTextView.frame.origin.y + spacer3, buttonSize.width, buttonSize.height);
+        
+        // collect button
+        collectView.frame=mcView.frame;
+        [collectRewardImageView setImage:rewardImageView.image];
+        [collectTextLabel setFont:[UIFont systemFontOfSize:fontSize]];
+        [collectTextLabel sizeToFit];
+        CGPoint center=responseTextView.center;
+        CGFloat y=center.y - collectRewardImageView.frame.size.height/2;
+        CGFloat x=(collectView.frame.size.width - (collectRewardImageView.frame.size.width + 5 + collectTextLabel.frame.size.width))/2;
+        collectRewardImageView.frame=CGRectMake(x, y, collectTextLabel.frame.size.height, collectTextLabel.frame.size.height);
+        collectTextLabel.frame=CGRectMake(collectRewardImageView.frame.origin.x+collectRewardImageView.frame.size.width+5, y, collectTextLabel.frame.size.width, collectTextLabel.frame.size.height);
+        [collectTextLabel setFont:[UIFont systemFontOfSize:fontSize]];
+        [self setButtonStyle:collectBtn];
+        collectBtn.layer.shadowOffset = buttonShadowSize;
+        [collectBtn.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
+        collectBtn.frame=CGRectMake(spacerX, responseTextView.frame.origin.y + spacer3, buttonSize.width, buttonSize.height);
 
--(void)layoutLandscapePad{
-    pollView.frame=CGRectMake(0, 0, 768, 586);
-    
-    defaultImageView.frame=CGRectMake(20, 20, 256, 256);
-    
-    closeBtn.frame=CGRectMake(714, 10, 44, 44);
-    
-    questionLabel.frame=CGRectMake(292, 68,456, 208);
-    [questionLabel setFont:[UIFont boldSystemFontOfSize:32.0]];
-    
-    virtualAmountImageView.frame=CGRectMake(20, 310, 256, 256);
-    virtualAmountImageView.hidden=YES;
-    virtualAmountRewardLabel.frame=CGRectMake(20, 369, 256, 58);
-    [virtualAmountRewardLabel setFont:[UIFont boldSystemFontOfSize:60.0]];
-    [virtualAmountRewardLabel setMinimumScaleFactor:0.5];
-    virtualAmount.frame=CGRectMake(46, 435, 188, 97);
-    [virtualAmount setFont:[UIFont boldSystemFontOfSize:60.0]];
-    
-    collectBtn.frame=CGRectMake(303, 500, 435, 44);
-    [collectBtn.titleLabel setFont:[UIFont systemFontOfSize:24]];
-    
-    mcView.frame=CGRectMake(292, 318, 456, 264);
-    mcBtn1.frame=CGRectMake(10, 20, 435, 44);
-    [mcBtn1.titleLabel setFont:[UIFont systemFontOfSize:24]];
-    mcBtn2.frame=CGRectMake(10, 81, 435, 44);
-    [mcBtn2.titleLabel setFont:[UIFont systemFontOfSize:24]];
-    mcBtn3.frame=CGRectMake(10, 139, 435, 44);
-    [mcBtn3.titleLabel setFont:[UIFont systemFontOfSize:24]];
-    mcBtn4.frame=CGRectMake(10, 200, 435, 44);
-    [mcBtn4.titleLabel setFont:[UIFont systemFontOfSize:24]];
-    
-    textView.frame=CGRectMake(292, 318, 456, 248);
-    responseTextView.frame=CGRectMake(10, 10, 435, 180);
-    [responseTextView setFont:[UIFont systemFontOfSize:24]];
-    textBtn.frame=CGRectMake(10, 203, 435, 44);
-    [textBtn.titleLabel setFont:[UIFont systemFontOfSize:24]];
-}
+        // reward image and text
+        rewardImageView.frame=CGRectMake(defaultImageView.frame.origin.x, (pollView.frame.size.height - defaultImageView.frame.origin.y - defaultImageView.frame.size.height)/2 + defaultImageView.frame.size.height, rewardImageSize.width, rewardImageSize.height);
+        virtualAmount.frame=CGRectMake(5+rewardImageView.frame.origin.x + rewardImageView.frame.size.width, rewardImageView.frame.origin.y, rewardTextSize.width, rewardTextSize.height);
+        [virtualAmount setFont:[UIFont systemFontOfSize:rewardFontSize]];
+        [virtualAmount sizeToFit];
+        [virtualAmountRewardLabel setFont:[UIFont systemFontOfSize:rewardFontSize]];
+        //[virtualAmountRewardLabel setMinimumScaleFactor:0.5];
+        virtualAmountRewardLabel.frame=virtualAmount.frame;
+        virtualAmountRewardLabel.frame=CGRectMake(virtualAmountRewardLabel.frame.origin.x, virtualAmountRewardLabel.frame.origin.y-virtualAmountRewardLabel.frame.size.height, pollImageSize.width, virtualAmountRewardLabel.frame.size.height);
+        [virtualAmountRewardLabel sizeToFit];
+        
+        // adjust x offset to center
+        CGFloat totalWidth=MAX(virtualAmount.frame.size.width, virtualAmountRewardLabel.frame.size.width)+ 5 + rewardImageView.frame.size.width;
+        CGFloat deltaX=(pollImageSize.width - totalWidth)/2;
+        rewardImageView.frame = CGRectOffset(rewardImageView.frame, deltaX, 0);
+        virtualAmount.frame = CGRectOffset(virtualAmount.frame, deltaX, 0);
+        virtualAmountRewardLabel.frame = CGRectOffset(virtualAmountRewardLabel.frame, deltaX, 0);
+     }
+    else {
+        // top right
+        defaultImageView.frame = CGRectMake(spacer1, spacer1, pollImageSize.width, pollImageSize.height);
+        
+        // top left
+        closeBtn.frame = CGRectMake(innerSize.width - (closeButtonSize.width + spacer4 + (baseScale * myPoll.app.closeButtonOffsetX/2)), spacer4 + (baseScale * myPoll.app.closeButtonOffsetY/2), closeButtonSize.width, closeButtonSize.height);
+        closeBtn.frame = CGRectInset(closeBtn.frame, -closeBtn.layer.borderWidth, -closeBtn.layer.borderWidth);
+        
+        
+        // poll question
+        questionLabel.frame = CGRectMake(defaultImageView.frame.origin.x + defaultImageView.frame.size.width + spacer4, spacer4, pollTextSize.width, innerSize.height - (4 * (buttonSize.height + spacer3)) - (2 * spacer4));
+        [questionLabel setFont:[UIFont systemFontOfSize:fontSize]];
+        
+        // mc choice
+        mcView.frame = CGRectMake(questionLabel.frame.origin.x, questionLabel.frame.origin.y + questionLabel.frame.size.height + spacer4, pollTextSize.width, 4 *( (buttonSize.height + spacer3)));
+        for (UIButton *button in [NSArray arrayWithObjects:mcBtn1,mcBtn2,mcBtn3,mcBtn4,nil ] ) {
+            [self setButtonStyle:button];
+            
+            button.layer.shadowOffset = buttonShadowSize;
+            [button.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
+        }
+        mcBtn1.frame=CGRectMake(spacerX, 0, buttonSize.width, buttonSize.height);
+        mcBtn2.frame=CGRectMake(spacerX, spacer3 + buttonSize.height, buttonSize.width, buttonSize.height);
+        mcBtn3.frame=CGRectMake(spacerX, 2 * (spacer3 + buttonSize.height), buttonSize.width, buttonSize.height);
+        mcBtn4.frame=CGRectMake(spacerX, 3 * (spacer3 + buttonSize.height), buttonSize.width, buttonSize.height);
+        
+        // text view
+        textView.frame=mcView.frame;
+        responseTextView.frame=CGRectMake(spacerX, 0, buttonSize.width, (3 * buttonSize.height) + (2 * spacer3));
+        [responseTextView setFont:[UIFont systemFontOfSize:fontSize]];
+        [self setButtonStyle:textBtn];
+        textBtn.layer.shadowOffset = buttonShadowSize;
+        [textBtn.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
+        textBtn.frame=CGRectMake(spacerX, responseTextView.frame.origin.y +  responseTextView.frame.size.height + spacer3, buttonSize.width, buttonSize.height);
+        
+        // collect button
+        collectView.frame=mcView.frame;
+        [collectRewardImageView setImage:rewardImageView.image];
+        [collectTextLabel setFont:[UIFont systemFontOfSize:fontSize]];
+        [collectTextLabel sizeToFit];
+        CGPoint center=responseTextView.center;
+        CGFloat y=center.y - collectRewardImageView.frame.size.height/2;
+        CGFloat x=(collectView.frame.size.width - (collectRewardImageView.frame.size.width + 5 + collectTextLabel.frame.size.width))/2;
+        collectRewardImageView.frame=CGRectMake(x, y, collectTextLabel.frame.size.height, collectTextLabel.frame.size.height);
+        collectTextLabel.frame=CGRectMake(collectRewardImageView.frame.origin.x+collectRewardImageView.frame.size.width+5, y, collectTextLabel.frame.size.width, collectTextLabel.frame.size.height);
+        [collectTextLabel setFont:[UIFont systemFontOfSize:fontSize]];
+        [self setButtonStyle:collectBtn];
+        collectBtn.layer.shadowOffset = buttonShadowSize;
+        [collectBtn.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
+        collectBtn.frame=CGRectMake(spacerX, responseTextView.frame.origin.y +  responseTextView.frame.size.height +  spacer3, buttonSize.width, buttonSize.height);
+        
+        // reward image and text
+        rewardImageView.frame=CGRectMake(defaultImageView.frame.origin.x, (pollView.frame.size.height - defaultImageView.frame.origin.y - defaultImageView.frame.size.height)/2 + defaultImageView.frame.size.height, rewardImageSize.width, rewardImageSize.height);
+        virtualAmount.frame=CGRectMake(5+rewardImageView.frame.origin.x + rewardImageView.frame.size.width, rewardImageView.frame.origin.y, rewardTextSize.width, rewardTextSize.height);
+        [virtualAmount setFont:[UIFont systemFontOfSize:rewardFontSize]];
+        [virtualAmount sizeToFit];
+        [virtualAmountRewardLabel setFont:[UIFont systemFontOfSize:rewardFontSize]];
+        //[virtualAmountRewardLabel setMinimumScaleFactor:0.5];
+        virtualAmountRewardLabel.frame=virtualAmount.frame;
+        virtualAmountRewardLabel.frame=CGRectMake(virtualAmountRewardLabel.frame.origin.x, virtualAmountRewardLabel.frame.origin.y-virtualAmountRewardLabel.frame.size.height, pollImageSize.width, virtualAmountRewardLabel.frame.size.height);
+        [virtualAmountRewardLabel sizeToFit];
+        
+        // adjust x offset to center
+        CGFloat totalWidth=MAX(virtualAmount.frame.size.width, virtualAmountRewardLabel.frame.size.width)+ 5 + rewardImageView.frame.size.width;
+        CGFloat deltaX=(pollImageSize.width - totalWidth)/2;
+        rewardImageView.frame = CGRectOffset(rewardImageView.frame, deltaX, 0);
+        virtualAmount.frame = CGRectOffset(virtualAmount.frame, deltaX, 0);
+        virtualAmountRewardLabel.frame = CGRectOffset(virtualAmountRewardLabel.frame, deltaX, 0);
+    }
 
--(void)layoutPortraitPhone{
-    pollView.frame=CGRectMake(0, 0, 280, 360);
-    
-    defaultImageView.frame=CGRectMake(12, 12, 112, 112);
-    
-    closeBtn.frame=CGRectMake(245, 5, 30, 30);
-    
-    questionLabel.frame=CGRectMake(12, 132,258, 64);
-    [questionLabel setFont:[UIFont boldSystemFontOfSize:24.0]];
-    
-    virtualAmountImageView.frame=CGRectMake(158, 12, 112, 112);
-    virtualAmountImageView.hidden=YES;
-    virtualAmountRewardLabel.frame=CGRectMake(158, 31, 112, 44);
-    [virtualAmountRewardLabel setFont:[UIFont boldSystemFontOfSize:28.0]];
-    [virtualAmountRewardLabel setMinimumScaleFactor:0.5];
-    virtualAmount.frame=CGRectMake(176, 69, 69, 44);
-    [virtualAmount setFont:[UIFont boldSystemFontOfSize:32.0]];
-    
-    collectBtn.frame=CGRectMake(11, 300, 259, 30);
-    [collectBtn.titleLabel setFont:[UIFont systemFontOfSize:17]];
-    
-    mcView.frame=CGRectMake(0, 195, 280, 165);
-    mcBtn1.frame=CGRectMake(10, 8, 258, 30);
-    [mcBtn1.titleLabel setFont:[UIFont systemFontOfSize:17]];
-    mcBtn2.frame=CGRectMake(10, 46, 258, 30);
-    [mcBtn2.titleLabel setFont:[UIFont systemFontOfSize:17]];
-    mcBtn3.frame=CGRectMake(10, 84, 258, 30);
-    [mcBtn3.titleLabel setFont:[UIFont systemFontOfSize:17]];
-    mcBtn4.frame=CGRectMake(10, 122, 258, 30);
-    [mcBtn4.titleLabel setFont:[UIFont systemFontOfSize:17]];
-    
-    textView.frame=CGRectMake(0, 195, 280, 165);
-    responseTextView.frame=CGRectMake(10, 8, 258, 106);
-    [responseTextView setFont:[UIFont systemFontOfSize:17]];
-    textBtn.frame=CGRectMake(10, 122, 258, 30);
-    [textBtn.titleLabel setFont:[UIFont systemFontOfSize:17]];
 }
-
--(void)layoutLandscapePhone{
-    pollView.frame=CGRectMake(0, 0, 360, 280);
-    
-    defaultImageView.frame=CGRectMake(12, 12, 112, 112);
-    
-    closeBtn.frame=CGRectMake(325, 5, 30, 30);
-    
-    questionLabel.frame=CGRectMake(136, 32,214, 72);
-    [questionLabel setFont:[UIFont boldSystemFontOfSize:24.0]];
-    
-    virtualAmountImageView.frame=CGRectMake(12, 157, 112, 112);
-    virtualAmountImageView.hidden=YES;
-    virtualAmountRewardLabel.frame=CGRectMake(12, 162, 112, 44);
-    [virtualAmountRewardLabel setFont:[UIFont boldSystemFontOfSize:28.0]];
-    [virtualAmountRewardLabel setMinimumScaleFactor:0.5];
-    virtualAmount.frame=CGRectMake(30, 214, 69, 44);
-    [virtualAmount setFont:[UIFont boldSystemFontOfSize:32.0]];
-    
-    collectBtn.frame=CGRectMake(139, 230, 214, 30);
-    [collectBtn.titleLabel setFont:[UIFont systemFontOfSize:17]];
-    
-    mcView.frame=CGRectMake(132, 115, 228, 165);
-    mcBtn1.frame=CGRectMake(7, 8, 214, 30);
-    [mcBtn1.titleLabel setFont:[UIFont systemFontOfSize:17]];
-    mcBtn2.frame=CGRectMake(7, 46, 214, 30);
-    [mcBtn2.titleLabel setFont:[UIFont systemFontOfSize:17]];
-    mcBtn3.frame=CGRectMake(7, 84, 214, 30);
-    [mcBtn3.titleLabel setFont:[UIFont systemFontOfSize:17]];
-    mcBtn4.frame=CGRectMake(7, 122, 214, 30);
-    [mcBtn4.titleLabel setFont:[UIFont systemFontOfSize:17]];
-    
-    textView.frame=CGRectMake(132, 115, 228, 165);
-    responseTextView.frame=CGRectMake(7, 8, 214, 106);
-    [responseTextView setFont:[UIFont systemFontOfSize:17]];
-    textBtn.frame=CGRectMake(7, 122, 214, 30);
-    [textBtn.titleLabel setFont:[UIFont systemFontOfSize:17]];
-}
-
 
 - (void)didMoveToSuperview {
 	// We need to take care of rotation ourselfs if added to a window
@@ -531,19 +1022,26 @@
     self.frame=mainWindow.bounds;
     
     if (myPoll.virtualAmount>0) {
-        virtualAmountImageView.hidden=NO;
+        rewardImageView.hidden=NO;
+        virtualAmountRewardLabel.hidden=NO;
         virtualAmount.hidden=NO;
     }
     else {
-        virtualAmountImageView.hidden=YES;
+        rewardImageView.hidden=YES;
+        virtualAmountRewardLabel.hidden=YES;
         virtualAmount.hidden=YES;
     }
+    
+    collectView.hidden=YES;
     
     UIView *rootView=[self topViewController].view ;
     [rootView addSubview:self];
     self.frame=self.superview.bounds;
     self.center=self.superview.center;
+    overlayView.frame=self.bounds;
+    borderImageView.frame=self.bounds;
     pollView.center=self.center;
+    backgroundView.center=pollView.center;
     [rootView endEditing:YES];
     
     [self setNeedsDisplay];
@@ -555,10 +1053,18 @@
     questionLabel.text=myPoll.customMessage;
     
     if (myPoll.virtualAmount>0) {
+        [collectBtn setTitle:myPoll.collectButtonText forState:UIControlStateNormal];
+        [collectRewardImageView setImage:rewardImageView.image];
+        collectView.hidden=NO;
         collectBtn.hidden=NO;
         closeBtn.hidden=YES;
+        rewardImageView.hidden=YES;
+        virtualAmount.hidden=YES;
+        virtualAmountRewardLabel.hidden=YES;
     }
     else {
+        [collectBtn setTitle:myPoll.thankyouButtonText forState:UIControlStateNormal];
+        collectView.hidden=YES;
         collectBtn.hidden=YES;
         closeBtn.hidden=NO;
     }
@@ -604,8 +1110,9 @@
     closeBtn.hidden=NO;
     mcView.hidden=YES;
     textView.hidden=YES;
-    
-    [self.delegate PJPollViewDidAnswered:self poll:myPoll];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.delegate PJPollViewDidAnswered:self poll:myPoll];
+    });
 }
 
 -(IBAction)userSkipped:(id)sender {
@@ -616,13 +1123,17 @@
         [self userConfirmed:sender];
     }
     else {
-        [self.delegate PJPollViewDidSkipped:self poll:myPoll];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate PJPollViewDidSkipped:self poll:myPoll];
+        });
     }
 }
 
 -(void)userConfirmed:(id)sender {
     [self endEditing:YES];
-    [self.delegate PJPollViewCloseAfterReponse:self poll:myPoll];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.delegate PJPollViewCloseAfterReponse:self poll:myPoll];
+     });
 }
 
 #pragma mark - Notifications
@@ -645,14 +1156,16 @@
     CGPoint center=self.center;
     UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
     if (UIInterfaceOrientationIsLandscape(orientation)) {
-        center.y=center.y - keyboardFrame.size.width + textBtn.frame.size.height;
+        center.y=center.y - keyboardFrame.size.width + textBtn.frame.size.height + 10;
     }
     else {
         center.y=center.y - keyboardFrame.size.height + textBtn.frame.size.height;
     }
     
     [UIView animateWithDuration:[animationDuration floatValue] animations:^{
+        backgroundView.center=center;
         pollView.center=center;
+        borderImageView.center=center;
     }];
 }
 
@@ -662,7 +1175,9 @@
     NSNumber *animationDuration=[[notification userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey];
     
     [UIView animateWithDuration:[animationDuration floatValue] animations:^{
+        backgroundView.center=self.center;
         pollView.center=self.center;
+        borderImageView.center=self.center;
     }];
 }
 
@@ -681,7 +1196,7 @@
 	if (!superview) {
 		return;
 	} else if ([superview isKindOfClass:[UIWindow class]]) {
-		[self setTransformForCurrentOrientation:YES];//
+		[self setTransformForCurrentOrientation:YES];
 	} else {
         [self setNeedsDisplay];
 	}

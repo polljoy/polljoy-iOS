@@ -21,7 +21,7 @@
 {
     self.activeDownload = [NSMutableData data];
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:self.urlString]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:self.urlString] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60];
     
     // alloc+init and start an NSURLConnection; release on completion/failure
     NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self];
@@ -57,8 +57,7 @@
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
-{
-    // Set appIcon and clear temporary data/image
+{   
     __block UIImage *image = [[UIImage alloc] initWithData:self.activeDownload];
     
     self.activeDownload = nil;

@@ -18,7 +18,6 @@
 + (NSUInteger)getTimeSinceInstall;
 + (UIColor *)colorFromHexString:(NSString *)hexString;
 + (UIImage *) defaultImage;
-
 @end
 
 

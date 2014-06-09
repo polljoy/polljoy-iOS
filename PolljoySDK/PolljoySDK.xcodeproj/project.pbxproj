@@ -25,8 +25,8 @@
 /* Begin PBXBuildFile section */
 		0A0B38FE18F644EC00619B68 /* PJApp.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A0B38FC18F644EC00619B68 /* PJApp.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0A0B38FF18F644EC00619B68 /* PJApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A0B38FD18F644EC00619B68 /* PJApp.m */; };
-		0A1A2BC018FBBCC0000166A0 /* btnCancel.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A1A2BBF18FBBCC0000166A0 /* btnCancel.png */; };
-		0A1A2BC218FBC4A8000166A0 /* moneyBag.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A1A2BC118FBC4A8000166A0 /* moneyBag.png */; };
+		0A1545B91942E3FB00CADC5F /* rewardImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A1545B81942E3FB00CADC5F /* rewardImage.png */; };
+		0A1545BB1942EB0600CADC5F /* closeButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A1545BA1942EB0600CADC5F /* closeButton.png */; };
 		0A1CF62B18F55AF300658A68 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A1CF62A18F55AF300658A68 /* Foundation.framework */; };
 		0A1CF65318F55BE500658A68 /* Polljoy.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1CF65218F55BE500658A68 /* Polljoy.m */; };
 		0A1CF65818F55D2F00658A68 /* Polljoy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A1CF65118F55BE500658A68 /* Polljoy.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -76,8 +76,8 @@
 /* Begin PBXFileReference section */
 		0A0B38FC18F644EC00619B68 /* PJApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PJApp.h; sourceTree = "<group>"; };
 		0A0B38FD18F644EC00619B68 /* PJApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PJApp.m; sourceTree = "<group>"; };
-		0A1A2BBF18FBBCC0000166A0 /* btnCancel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btnCancel.png; sourceTree = "<group>"; };
-		0A1A2BC118FBC4A8000166A0 /* moneyBag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = moneyBag.png; sourceTree = "<group>"; };
+		0A1545B81942E3FB00CADC5F /* rewardImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rewardImage.png; sourceTree = "<group>"; };
+		0A1545BA1942EB0600CADC5F /* closeButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closeButton.png; sourceTree = "<group>"; };
 		0A1CF62718F55AF300658A68 /* libPolljoy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPolljoy.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A1CF62A18F55AF300658A68 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		0A1CF62E18F55AF300658A68 /* PolljoySDK-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PolljoySDK-Prefix.pch"; sourceTree = "<group>"; };
@@ -98,7 +98,6 @@
 		0ACABF3018F6A63A0018D6DD /* PJDebugUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PJDebugUtil.h; sourceTree = "<group>"; };
 		0AD7A13E18F81F3100C9C742 /* PJPollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PJPollView.h; sourceTree = "<group>"; };
 		0AD7A13F18F81F3100C9C742 /* PJPollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PJPollView.m; sourceTree = "<group>"; };
-		0AD7A14218F81FB900C9C742 /* PJPollView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PJPollView.xib; sourceTree = "<group>"; };
 		0AF90DC918FAB34000B2CAAC /* polljoy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = polljoy.png; sourceTree = "<group>"; };
 		0AF90DCF18FAF53F00B2CAAC /* PJImageDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PJImageDownloader.h; sourceTree = "<group>"; };
 		0AF90DD018FAF53F00B2CAAC /* PJImageDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PJImageDownloader.m; sourceTree = "<group>"; };
@@ -201,9 +200,8 @@
 			isa = PBXGroup;
 			children = (
 				0A1CF67E18F5663D00658A68 /* Supporting Files */,
-				0AD7A14218F81FB900C9C742 /* PJPollView.xib */,
-				0A1A2BBF18FBBCC0000166A0 /* btnCancel.png */,
-				0A1A2BC118FBC4A8000166A0 /* moneyBag.png */,
+				0A1545BA1942EB0600CADC5F /* closeButton.png */,
+				0A1545B81942E3FB00CADC5F /* rewardImage.png */,
 				0AF90DC918FAB34000B2CAAC /* polljoy.png */,
 			);
 			path = PolljoyResources;
@@ -335,10 +333,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A1A2BC218FBC4A8000166A0 /* moneyBag.png in Resources */,
+				0A1545BB1942EB0600CADC5F /* closeButton.png in Resources */,
 				0A1CF68218F5663D00658A68 /* InfoPlist.strings in Resources */,
 				0AF90DCA18FAB34000B2CAAC /* polljoy.png in Resources */,
-				0A1A2BC018FBBCC0000166A0 /* btnCancel.png in Resources */,
+				0A1545B91942E3FB00CADC5F /* rewardImage.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

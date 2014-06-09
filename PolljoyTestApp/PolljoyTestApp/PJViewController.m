@@ -57,7 +57,6 @@
     
     [self requestPoll:nil];
     
-    //[NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateSession) userInfo:nil repeats:NO];
 }
 
 -(IBAction)requestPoll:(id)sender

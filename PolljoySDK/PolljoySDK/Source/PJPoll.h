@@ -7,6 +7,19 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "PJApp.h"
+
+enum {
+    PJPollDefaultImageReady      = 1 << 0,
+    PJPollRewardImageReady       = 1 << 1,
+    PJPollCloseButtonImageReady  = 1 << 2,
+    PJPollBorderLImageReady      = 1 << 3,
+    PJPollBorderPImageReady      = 1 << 4,
+    PJPollButtonLImageReady      = 1 << 5,
+    PJPollButtonPImageReady      = 1 << 6,
+    PJPollAllImageReady          = 127
+};
+typedef NSUInteger PJPollImageStatus;
 
 @interface PJPoll : NSObject
 
@@ -52,4 +65,20 @@
 @property (nonatomic,assign) BOOL isReadyToShow;
 @property (nonatomic,strong) NSArray *choices;
 @property (nonatomic,strong) NSString *tags;
+@property (nonatomic,assign) NSInteger appUsageTime;
+@property (nonatomic,strong) NSDictionary *choiceUrl;
+@property (nonatomic,strong) NSString *collectButtonText;
+@property (nonatomic,assign) NSInteger imageCornerRadius;
+@property (nonatomic,assign) NSInteger level;
+@property (nonatomic,strong) NSString *pollRewardImageUrl;
+@property (nonatomic,strong) NSString *prerequisiteType;
+@property (nonatomic,strong) NSString *prerequisiteAnswer;
+@property (nonatomic,assign) NSInteger prerequisitePoll;
+@property (nonatomic,strong) NSDate *sendDate;
+@property (nonatomic,assign) NSInteger session;
+@property (nonatomic,strong) NSString *submitButtonText;
+@property (nonatomic,strong) NSString *thankyouButtonText;
+@property (nonatomic,strong) NSString *virtualCurrency;
+@property (nonatomic,strong) PJApp *app;
+@property (nonatomic,assign) PJPollImageStatus imagesStatus;
 @end

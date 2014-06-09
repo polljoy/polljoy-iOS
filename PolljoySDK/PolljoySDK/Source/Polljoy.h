@@ -36,6 +36,9 @@
  
  2014/05/08, Antony Man - add more controls to present poll UI
     Version 1.4.5
+ 
+ 2014/06/09, Antony Man - new poll UI with custom settings
+ Version 1.5
  */
 
 #import <Foundation/Foundation.h>

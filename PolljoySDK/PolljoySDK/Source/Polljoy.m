@@ -55,7 +55,6 @@ static NSOperationQueue *_backgroundQueue;
 +(void) startSession:(NSString *)appId
 {
     [[self class] startSession:appId newSession:YES];
-
 }
 
 +(void) startSession:appId newSession:(BOOL) newSession
@@ -117,37 +116,63 @@ static NSOperationQueue *_backgroundQueue;
                                    NSDictionary *appDict=[responseObject objectForKey:@"app"];
                                    
                                    if ([status integerValue]==0) {
-                                       _sessionId=[appDict objectForKey:@"sessionId"];
-                                       
-                                       // set app data
-                                       PJApp *app=[[PJApp alloc] init];
-                                       app.appId=[appDict objectForKey:@"id"];
-                                       app.appName=[appDict objectForKey:@"appName"];
-                                       app.defaultImageUrl=[appDict objectForKey:@"defaultImageUrl"];
-                                       app.maximumPollPerSession=[[appDict objectForKey:@"maxPollsPerSession"] integerValue];
-                                       app.maximumPollPerDay=[[appDict objectForKey:@"maxPollsPerDay"] integerValue];
-                                       app.maximumPollInARow=[[appDict objectForKey:@"maxPollsInARow"] integerValue];
-                                       app.backgroundColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"backgroundColor"]];
-                                       app.borderColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"borderColor"]];
-                                       app.buttonColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"buttonColor"]];
-                                       app.fontColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"fontColor"]];
-                                       
-                                       _app = app;
-                                       
-                                       _userId = [appDict objectForKey:@"userId"];
-                                       
-                                       if (_app.defaultImageUrl!=nil) {
+                                       dispatch_async(dispatch_get_main_queue(), ^{
+                                           _sessionId=[appDict objectForKey:@"sessionId"];
+                                           
+                                           // set app data
+                                           PJApp *app=[[PJApp alloc] init];
+                                           app.appId=[appDict objectForKey:@"id"];
+                                           app.appName=[appDict objectForKey:@"appName"];
+                                           app.defaultImageUrl=[appDict objectForKey:@"defaultImageUrl"];
+                                           app.maximumPollPerSession=[[appDict objectForKey:@"maxPollsPerSession"] integerValue];
+                                           app.maximumPollPerDay=[[appDict objectForKey:@"maxPollsPerDay"] integerValue];
+                                           app.maximumPollInARow=[[appDict objectForKey:@"maxPollsInARow"] integerValue];
+                                           app.backgroundColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"backgroundColor"]];
+                                           app.borderColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"borderColor"]];
+                                           app.buttonColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"buttonColor"]];
+                                           app.fontColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"fontColor"]];
+                                           app.backgroundAlpha=[[appDict objectForKey:@"backgroundAlpha"] integerValue];
+                                           app.backgroundCornerRadius=[[appDict objectForKey:@"backgroundCornerRadius"] integerValue];
+                                           app.borderWidth=[[appDict objectForKey:@"borderWidth"] integerValue];
+                                           app.borderImageUrl_16x9_L=[appDict objectForKey:@"borderImageUrl_16x9_L"];
+                                           app.borderImageUrl_16x9_P=[appDict objectForKey:@"borderImageUrl_16x9_P"];
+                                           app.borderImageUrl_3x2_L=[appDict objectForKey:@"borderImageUrl_3x2_L"];
+                                           app.borderImageUrl_3x2_P=[appDict objectForKey:@"borderImageUrl_3x2_P"];
+                                           app.borderImageUrl_4x3_L=[appDict objectForKey:@"borderImageUrl_4x3_L"];
+                                           app.borderImageUrl_4x3_P=[appDict objectForKey:@"borderImageUrl_4x3_P"];
+                                           app.buttonFontColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"buttonFontColor"]];
+                                           app.buttonImageUrl_16x9_L=[appDict objectForKey:@"buttonImageUrl_16x9_L"];
+                                           app.buttonImageUrl_16x9_P=[appDict objectForKey:@"buttonImageUrl_16x9_P"];
+                                           app.buttonImageUrl_3x2_L=[appDict objectForKey:@"buttonImageUrl_3x2_L"];
+                                           app.buttonImageUrl_3x2_P=[appDict objectForKey:@"buttonImageUrl_3x2_P"];
+                                           app.buttonImageUrl_4x3_L=[appDict objectForKey:@"buttonImageUrl_4x3_L"];
+                                           app.buttonImageUrl_4x3_P=[appDict objectForKey:@"buttonImageUrl_4x3_P"];
+                                           app.buttonShadow=[[appDict objectForKey:@"buttonShadow"] boolValue];
+                                           app.closeButtonImageUrl=[appDict objectForKey:@"closeButtonImageUrl"];
+                                           app.closeButtonLocation=[[appDict objectForKey:@"closeButtonLocation"] integerValue];
+                                           app.closeButtonOffsetX=[[appDict objectForKey:@"closeButtonOffsetX"] integerValue];
+                                           app.closeButtonOffsetY=[[appDict objectForKey:@"closeButtonOffsetY"] integerValue];
+                                           app.deviceId=[appDict objectForKey:@"deviceId"];
+                                           app.fontName=[appDict objectForKey:@"fontName"];
+                                           app.overlayAlpha=[[appDict objectForKey:@"overlayAlpha"] integerValue];
+                                           app.rewardImageUrl=[appDict objectForKey:@"rewardImageUrl"];
+                                           app.userId=[appDict objectForKey:@"userId"];
+                                           
+                                           _app = app;
+                                           
+                                           _userId = [appDict objectForKey:@"userId"];
+                                           
                                            [[self class] downloadAppImage:_app.defaultImageUrl];
-                                       }
-                                       
-                                       util_Log(@"[%@ %@] _sessionId: %@", _PJ_CLASS, _PJ_METHOD, _sessionId);
-                                       util_Log(@"[%@ %@] _deviceId: %@", _PJ_CLASS, _PJ_METHOD, _deviceId);
-                                       util_Log(@"[%@ %@] _deviceModel: %@", _PJ_CLASS, _PJ_METHOD, _deviceModel);
-                                       util_Log(@"[%@ %@] _deviceOS: %@", _PJ_CLASS, _PJ_METHOD, _deviceOS);
-                                       util_Log(@"[%@ %@] _devicePlatform: %@", _PJ_CLASS, _PJ_METHOD, _devicePlatform);
-                                       util_Log(@"[%@ %@] _session: %lu", _PJ_CLASS, _PJ_METHOD, (unsigned long)_session);
-                                       util_Log(@"[%@ %@] _timeSinceInstall: %lu", _PJ_CLASS, _PJ_METHOD, (unsigned long)_timeSinceInstall);
-                                       util_Log(@"[%@ %@] App: %@", _PJ_CLASS, _PJ_METHOD, _app.appName);
+                                           
+                                           util_Log(@"[%@ %@] _sessionId: %@", _PJ_CLASS, _PJ_METHOD, _sessionId);
+                                           util_Log(@"[%@ %@] _deviceId: %@", _PJ_CLASS, _PJ_METHOD, _deviceId);
+                                           util_Log(@"[%@ %@] _deviceModel: %@", _PJ_CLASS, _PJ_METHOD, _deviceModel);
+                                           util_Log(@"[%@ %@] _deviceOS: %@", _PJ_CLASS, _PJ_METHOD, _deviceOS);
+                                           util_Log(@"[%@ %@] _devicePlatform: %@", _PJ_CLASS, _PJ_METHOD, _devicePlatform);
+                                           util_Log(@"[%@ %@] _session: %lu", _PJ_CLASS, _PJ_METHOD, (unsigned long)_session);
+                                           util_Log(@"[%@ %@] _timeSinceInstall: %lu", _PJ_CLASS, _PJ_METHOD, (unsigned long)_timeSinceInstall);
+                                           util_Log(@"[%@ %@] App: %@", _PJ_CLASS, _PJ_METHOD, _app.appName);
+                                       });
                                    }
                                    else {
                                        NSLog(@"%@: startSession Error - Status: %@ appId: %@", PJ_SDK_NAME, status, _appId);
@@ -192,7 +217,7 @@ static NSOperationQueue *_backgroundQueue;
 
 +(void) schedulePollRequest
 {
-    util_Log(@"[%@ %@]", _PJ_CLASS, _PJ_METHOD);
+    dispatch_async(dispatch_get_main_queue(), ^{
     [[self class] getPollWithDelegate:_delegate
                            appVersion:_appVersion
                                 level:_level
@@ -200,6 +225,7 @@ static NSOperationQueue *_backgroundQueue;
                      timeSinceInstall:_timeSinceInstall
                              userType:_userType
                                  tags:_tags];
+    });
 
 }
 
@@ -228,6 +254,7 @@ static NSOperationQueue *_backgroundQueue;
                    userType:(PJUserType) userType
                        tags:(NSString*) tags
 {
+    
     if (_sessionId==nil) {
         
         _appVersion=version;
@@ -319,16 +346,18 @@ static NSOperationQueue *_backgroundQueue;
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                                
                                if (!connectionError) {
-                                   NSMutableDictionary *responseObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+                                   NSError *error;
+                                   NSMutableDictionary *responseObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
                                    
                                    NSNumber *status=[responseObject objectForKey:@"status"];
                                    //NSNumber *count=[responseObject objectForKey:@"count"];
                                    NSString *message=[responseObject objectForKey:@"message"];
                                    NSArray *pollsArray=[responseObject objectForKey:@"polls"];
-                                   
+
                                    if ([status integerValue]==0) {
                                        dispatch_async(dispatch_get_main_queue(), ^{
                                            
+                                           NSInteger count=0;
                                            _polls = [NSMutableArray array];
                                            _pollsViews = [NSMutableDictionary dictionary];
                                            for ( NSDictionary *pollRequest in pollsArray) {
@@ -377,6 +406,63 @@ static NSOperationQueue *_backgroundQueue;
                                                poll.isReadyToShow=NO;
                                                poll.choices=[request objectForKey:@"choices"];
                                                poll.tags=[request objectForKey:@"tags"];
+                                               poll.appUsageTime=[[request objectForKey:@"appUsageTime"] integerValue];
+                                               poll.choiceUrl=[request objectForKey:@"choiceUrl"];
+                                               poll.collectButtonText=[request objectForKey:@"collectButtonText"];
+                                               poll.imageCornerRadius=[[request objectForKey:@"imageCornerRadius"] integerValue];
+                                               poll.level=[[request objectForKey:@"level"] integerValue];
+                                               poll.pollRewardImageUrl=[request objectForKey:@"pollRewardImageUrl"];
+                                               poll.prerequisiteType=[request objectForKey:@"prerequisiteType"];
+                                               poll.prerequisiteAnswer=[request objectForKey:@"prerequisiteAnswer"];
+                                               poll.prerequisitePoll=(([request objectForKey:@"prerequisitePoll"] != nil) && (![[request objectForKey:@"prerequisitePoll"] isEqual:[NSNull null]]))?[[request objectForKey:@"prerequisitePoll"] integerValue ]:-1;
+                                               poll.sendDate=[request objectForKey:@"sendDate"];
+                                               poll.session=[[request objectForKey:@"session"] integerValue];
+                                               poll.submitButtonText=[request objectForKey:@"submitButtonText"];
+                                               poll.thankyouButtonText=[request objectForKey:@"thankyouButtonText"];
+                                               poll.virtualCurrency=[request objectForKey:@"virtualCurrency"];
+                                               
+                                               // update _app from first record
+                                               if (count == 0) {
+                                                   NSDictionary *appDict=[request objectForKey:@"app"];
+                                                   
+                                                   _app.appId=[appDict objectForKey:@"id"];
+                                                   _app.appName=[appDict objectForKey:@"appName"];
+                                                   _app.defaultImageUrl=[appDict objectForKey:@"defaultImageUrl"];
+                                                   _app.maximumPollPerSession=[[appDict objectForKey:@"maxPollsPerSession"] integerValue];
+                                                   _app.maximumPollPerDay=[[appDict objectForKey:@"maxPollsPerDay"] integerValue];
+                                                   _app.maximumPollInARow=[[appDict objectForKey:@"maxPollsInARow"] integerValue];
+                                                   _app.backgroundColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"backgroundColor"]];
+                                                   _app.borderColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"borderColor"]];
+                                                   _app.buttonColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"buttonColor"]];
+                                                   _app.fontColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"fontColor"]];
+                                                   _app.backgroundAlpha=[[appDict objectForKey:@"backgroundAlpha"] integerValue];
+                                                   _app.backgroundCornerRadius=[[appDict objectForKey:@"backgroundCornerRadius"] integerValue];
+                                                   _app.borderWidth=[[appDict objectForKey:@"borderWidth"] integerValue];
+                                                   _app.borderImageUrl_16x9_L=[appDict objectForKey:@"borderImageUrl_16x9_L"];
+                                                   _app.borderImageUrl_16x9_P=[appDict objectForKey:@"borderImageUrl_16x9_P"];
+                                                   _app.borderImageUrl_3x2_L=[appDict objectForKey:@"borderImageUrl_3x2_L"];
+                                                   _app.borderImageUrl_3x2_P=[appDict objectForKey:@"borderImageUrl_3x2_P"];
+                                                   _app.borderImageUrl_4x3_L=[appDict objectForKey:@"borderImageUrl_4x3_L"];
+                                                   _app.borderImageUrl_4x3_P=[appDict objectForKey:@"borderImageUrl_4x3_P"];
+                                                   _app.buttonFontColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"buttonFontColor"]];
+                                                   _app.buttonImageUrl_16x9_L=[appDict objectForKey:@"buttonImageUrl_16x9_L"];
+                                                   _app.buttonImageUrl_16x9_P=[appDict objectForKey:@"buttonImageUrl_16x9_P"];
+                                                   _app.buttonImageUrl_3x2_L=[appDict objectForKey:@"buttonImageUrl_3x2_L"];
+                                                   _app.buttonImageUrl_3x2_P=[appDict objectForKey:@"buttonImageUrl_3x2_P"];
+                                                   _app.buttonImageUrl_4x3_L=[appDict objectForKey:@"buttonImageUrl_4x3_L"];
+                                                   _app.buttonImageUrl_4x3_P=[appDict objectForKey:@"buttonImageUrl_4x3_P"];
+                                                   _app.buttonShadow=[[appDict objectForKey:@"buttonShadow"] boolValue];
+                                                   _app.closeButtonImageUrl=[appDict objectForKey:@"closeButtonImageUrl"];
+                                                   _app.closeButtonLocation=[[appDict objectForKey:@"closeButtonLocation"] integerValue];
+                                                   _app.closeButtonOffsetX=[[appDict objectForKey:@"closeButtonOffsetX"] integerValue];
+                                                   _app.closeButtonOffsetY=[[appDict objectForKey:@"closeButtonOffsetY"] integerValue];
+                                                   _app.deviceId=[appDict objectForKey:@"deviceId"];
+                                                   _app.fontName=[appDict objectForKey:@"fontName"];
+                                                   _app.overlayAlpha=[[appDict objectForKey:@"overlayAlpha"] integerValue];
+                                                   _app.rewardImageUrl=[appDict objectForKey:@"rewardImageUrl"];
+                                                   _app.userId=[appDict objectForKey:@"userId"];
+                                               }
+                                               poll.app =_app;
                                                
                                                // create the view
                                                PJPollView *pollView=[[PJPollView alloc] initWithPoll:poll];
@@ -384,6 +470,7 @@ static NSOperationQueue *_backgroundQueue;
                                                [_pollsViews setObject:pollView forKey:[NSNumber numberWithInteger:poll.pollToken]];
                                                [_polls addObject:poll];
                                             
+                                               count++;
                                            }
                                        });
                                    }
@@ -492,18 +579,123 @@ static NSOperationQueue *_backgroundQueue;
 }
 
 +(void) downloadAppImage:(NSString*) urlString
-{
+{    
     // cache the default image and let it handle by iOS
     if ((_app.defaultImageUrl !=nil) && (![_app.defaultImageUrl isEqual:[NSNull null]])){
         PJImageDownloader *imageDownloader = [[PJImageDownloader alloc] init];
-        [imageDownloader setUrlString:urlString];
+        [imageDownloader setUrlString:_app.defaultImageUrl];
         [imageDownloader setCompletionHandler:^(UIImage * image) {
             // do nothing, just let iOS cache the image
-            util_Log(@"[%@ %@] completed: %@", _PJ_CLASS, _PJ_METHOD, urlString);
+             util_Log(@"[%@ %@] defaultImageUrl completed: %@", _PJ_CLASS, _PJ_METHOD, urlString);
         }];
         
         [imageDownloader startDownload];
 
+    }
+    
+    // cache reward image
+    if ((_app.rewardImageUrl !=nil) && (![_app.rewardImageUrl isEqual:[NSNull null]])){
+        PJImageDownloader *imageDownloader = [[PJImageDownloader alloc] init];
+        [imageDownloader setUrlString:_app.rewardImageUrl];
+        [imageDownloader setCompletionHandler:^(UIImage * image) {
+            // do nothing, just let iOS cache the image
+            util_Log(@"[%@ %@] rewardImageUrl completed: %@", _PJ_CLASS, _PJ_METHOD, _app.closeButtonImageUrl);
+        }];
+        
+        [imageDownloader startDownload];
+        
+    }
+    
+    // cache close button image
+    if ((_app.closeButtonImageUrl != nil) && (![_app.closeButtonImageUrl isEqual:[NSNull null]])){
+        PJImageDownloader *imageDownloader = [[PJImageDownloader alloc] init];
+        [imageDownloader setUrlString:_app.closeButtonImageUrl];
+        [imageDownloader setCompletionHandler:^(UIImage * image) {
+            // do nothing, just let iOS cache the image
+            util_Log(@"[%@ %@] closeButtonImageUrl completed: %@", _PJ_CLASS, _PJ_METHOD, _app.closeButtonImageUrl);
+        }];
+        
+        [imageDownloader startDownload];
+        
+    }
+    
+    // cache border and button image
+    NSString *borderImageL = nil;
+    NSString *borderImageP = nil;
+    NSString *buttonImageL = nil;
+    NSString *buttonImageP = nil;
+    
+    if (IS_IPHONE) {
+        if (IS_HEIGHT_GTE_568) {
+            // 16:9
+            borderImageL = [_app.borderImageUrl_16x9_L length] > 0 ? _app.borderImageUrl_16x9_L : nil;
+            borderImageP = [_app.borderImageUrl_16x9_P length] > 0 ? _app.borderImageUrl_16x9_P : nil;
+            buttonImageL = [_app.buttonImageUrl_16x9_L length] > 0 ? _app.buttonImageUrl_16x9_L : nil;
+            buttonImageP = [_app.buttonImageUrl_16x9_P length] > 0 ? _app.buttonImageUrl_16x9_P : nil;
+        }
+        else {
+            // 3:2
+            borderImageL = [_app.borderImageUrl_3x2_L length] > 0 ? _app.borderImageUrl_3x2_L : nil;
+            borderImageP = [_app.borderImageUrl_3x2_P length] > 0 ? _app.borderImageUrl_3x2_P : nil;
+            buttonImageL = [_app.buttonImageUrl_3x2_L length] > 0 ? _app.buttonImageUrl_3x2_L : nil;
+            buttonImageP = [_app.buttonImageUrl_3x2_P length] > 0 ? _app.buttonImageUrl_3x2_P : nil;
+        }
+    }
+    else {
+        // 4:3, iPad
+        borderImageL = [_app.borderImageUrl_4x3_L length] > 0 ? _app.borderImageUrl_4x3_L : nil;
+        borderImageP = [_app.borderImageUrl_4x3_P length] > 0 ? _app.borderImageUrl_4x3_P : nil;
+        buttonImageL = [_app.buttonImageUrl_4x3_L length] > 0 ? _app.buttonImageUrl_4x3_L : nil;
+        buttonImageP = [_app.buttonImageUrl_4x3_P length] > 0 ? _app.buttonImageUrl_4x3_P : nil;
+    }
+    
+    // cache images
+    if ((borderImageL != nil) && (![borderImageL isEqual:[NSNull null]])){
+        PJImageDownloader *imageDownloader0 = [[PJImageDownloader alloc] init];
+        [imageDownloader0 setUrlString:borderImageL];
+        [imageDownloader0 setCompletionHandler:^(UIImage * image) {
+            // do nothing, just let iOS cache the image
+            util_Log(@"[%@ %@] borderImageL completed: %@", _PJ_CLASS, _PJ_METHOD, borderImageL);
+        }];
+        
+        [imageDownloader0 startDownload];
+        
+    }
+    
+    if ((borderImageP != nil) && (![borderImageP isEqual:[NSNull null]])){
+        PJImageDownloader *imageDownloader1 = [[PJImageDownloader alloc] init];
+        [imageDownloader1 setUrlString:borderImageP];
+        [imageDownloader1 setCompletionHandler:^(UIImage * image) {
+            // do nothing, just let iOS cache the image
+            util_Log(@"[%@ %@] borderImageP completed: %@", _PJ_CLASS, _PJ_METHOD, borderImageP);
+        }];
+        
+        [imageDownloader1 startDownload];
+        
+    }
+
+    if ((buttonImageL != nil) && (![buttonImageL isEqual:[NSNull null]])){
+        PJImageDownloader *imageDownloader2 = [[PJImageDownloader alloc] init];
+        [imageDownloader2 setUrlString:buttonImageL];
+        [imageDownloader2 setCompletionHandler:^(UIImage * image) {
+            // do nothing, just let iOS cache the image
+            util_Log(@"[%@ %@] buttonImageL completed: %@", _PJ_CLASS, _PJ_METHOD, buttonImageL);
+        }];
+        
+        [imageDownloader2 startDownload];
+        
+    }
+    
+    if ((buttonImageP != nil) && (![buttonImageP isEqual:[NSNull null]])){
+        PJImageDownloader *imageDownloader3 = [[PJImageDownloader alloc] init];
+        [imageDownloader3 setUrlString:buttonImageP];
+        [imageDownloader3 setCompletionHandler:^(UIImage * image) {
+            // do nothing, just let iOS cache the image
+            util_Log(@"[%@ %@] buttonImageP completed: %@", _PJ_CLASS, _PJ_METHOD, buttonImageP);
+        }];
+        
+        [imageDownloader3 startDownload];
+        
     }
 }
 
@@ -684,6 +876,19 @@ static NSOperationQueue *_backgroundQueue;
         }
         else {
             [view showActionAfterResponse];
+        }
+    }
+    
+    // check if response has associated external link
+    if ([poll.type isEqualToString:@"M"]) {
+        if (poll.choiceUrl != nil){
+            NSDictionary *choiceUrl=[poll.choiceUrl objectForKey:response];
+            NSString *iosURL = [choiceUrl objectForKey:@"ios"];
+            if ([iosURL length] > 0) {
+                if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:iosURL]]) {
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:iosURL]];
+                }
+            }
         }
     }
 }
