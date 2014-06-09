@@ -1156,10 +1156,21 @@
     CGPoint center=self.center;
     UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
     if (UIInterfaceOrientationIsLandscape(orientation)) {
-        center.y=center.y - keyboardFrame.size.width + textBtn.frame.size.height + 10;
+
+        if (IS_IPHONE) {
+            if (IS_HEIGHT_GTE_568) {
+                center.y=center.y - keyboardFrame.size.width + textBtn.frame.size.height + 50;
+            }
+            else{
+                center.y=center.y - keyboardFrame.size.width + textBtn.frame.size.height + 50;
+            }
+        }
+        else {
+            center.y=center.y - keyboardFrame.size.width + textBtn.frame.size.height + 80;
+        }
     }
     else {
-        center.y=center.y - keyboardFrame.size.height + textBtn.frame.size.height;
+        center.y=center.y - keyboardFrame.size.height + textBtn.frame.size.height + 20;
     }
     
     [UIView animateWithDuration:[animationDuration floatValue] animations:^{
