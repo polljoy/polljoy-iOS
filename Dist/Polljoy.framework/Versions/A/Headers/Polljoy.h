@@ -39,6 +39,9 @@
  
  2014/06/09, Antony Man - new poll UI with custom settings
  Version 1.5
+ 
+ 2014/06/12, Antony Man - UI update
+ Version 1.5.1
  */
 
 #import <Foundation/Foundation.h>

@@ -157,7 +157,8 @@ static NSOperationQueue *_backgroundQueue;
                                            app.overlayAlpha=[[appDict objectForKey:@"overlayAlpha"] integerValue];
                                            app.rewardImageUrl=[appDict objectForKey:@"rewardImageUrl"];
                                            app.userId=[appDict objectForKey:@"userId"];
-                                           
+                                           app.imageCornerRadius = [[appDict objectForKey:@"imageCornerRadius"] integerValue];
+                                                                    
                                            _app = app;
                                            
                                            _userId = [appDict objectForKey:@"userId"];
@@ -461,6 +462,7 @@ static NSOperationQueue *_backgroundQueue;
                                                    _app.overlayAlpha=[[appDict objectForKey:@"overlayAlpha"] integerValue];
                                                    _app.rewardImageUrl=[appDict objectForKey:@"rewardImageUrl"];
                                                    _app.userId=[appDict objectForKey:@"userId"];
+                                                   _app.imageCornerRadius=[[appDict objectForKey:@"imageCornerRadius"] integerValue];
                                                }
                                                poll.app =_app;
                                                

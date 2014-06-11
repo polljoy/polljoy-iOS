@@ -45,5 +45,5 @@
 @property (nonatomic,assign) NSInteger overlayAlpha;
 @property (nonatomic,strong) NSString *rewardImageUrl;
 @property (nonatomic,strong) NSString *userId;
-
+@property (nonatomic,assign) NSInteger imageCornerRadius;
 @end
