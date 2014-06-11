@@ -196,6 +196,9 @@ If you issue a virtual currency amount to user, you MUST implement this method t
 
 ## Version History
 
+### Version 1.5.1
+ - UI update
+ 
 ### Version 1.5
  - a new UI layout
  - support new custom layout settings a in admin panel
