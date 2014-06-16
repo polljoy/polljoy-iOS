@@ -42,6 +42,9 @@
  
  2014/06/12, Antony Man - UI update
  Version 1.5.1
+ 
+ 2014/06/16, Antony Man - Fixed reward image location in portrait mode
+ Version 1.5.2
  */
 
 #import <Foundation/Foundation.h>

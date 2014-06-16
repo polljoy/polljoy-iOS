@@ -196,6 +196,9 @@ If you issue a virtual currency amount to user, you MUST implement this method t
 
 ## Version History
 
+### Version 1.5.2
+ - Fixed reward image location in portrait mode
+
 ### Version 1.5.1
  - UI update
  

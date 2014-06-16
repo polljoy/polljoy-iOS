@@ -757,7 +757,6 @@
     [virtualAmountRewardLabel sizeToFit];
     // adjust X
     CGFloat x0 = (defaultImageView.frame.origin.x- (rewardImageView.frame.size.width + 5 + MAX(virtualAmount.frame.size.width,virtualAmountRewardLabel.frame.size.width)))/2;
-    x0 += (myPoll.app.closeButtonLocation == 0) ? defaultImageView.frame.size.width: 0;
     rewardImageView.frame=CGRectOffset(rewardImageView.frame, x0, 0);
     virtualAmount.frame=CGRectOffset(virtualAmount.frame, x0, 0);
     virtualAmountRewardLabel.frame=CGRectOffset(virtualAmountRewardLabel.frame, x0, 0);
