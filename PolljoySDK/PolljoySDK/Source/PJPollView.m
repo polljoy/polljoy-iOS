@@ -418,7 +418,7 @@
             else {
                 //download fail, use default image and return ready
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [defaultImageView setImage:[PolljoyCore defaultImage]];
+                    [defaultImageView setImage:nil];
                     defaultImageView.layer.cornerRadius=myPoll.app.imageCornerRadius;
                     myPoll.imagesStatus |= PJPollDefaultImageReady;
                     [self checkImageStatus];
@@ -430,7 +430,7 @@
     }
     else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [defaultImageView setImage:[PolljoyCore defaultImage]];
+            [defaultImageView setImage:nil];
             defaultImageView.layer.cornerRadius=myPoll.app.imageCornerRadius;
             myPoll.imagesStatus |= PJPollDefaultImageReady;
             [self checkImageStatus];

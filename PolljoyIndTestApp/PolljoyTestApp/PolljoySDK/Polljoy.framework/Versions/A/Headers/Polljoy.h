@@ -45,6 +45,9 @@
  
  2014/06/16, Antony Man - Fixed reward image location in portrait mode
  Version 1.5.2
+ 
+ 2014/06/17, Antony Man - Not showing default image when there is no poll image
+ Version 1.5.3
  */
 
 #import <Foundation/Foundation.h>
