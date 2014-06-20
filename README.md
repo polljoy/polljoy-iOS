@@ -196,6 +196,9 @@ If you issue a virtual currency amount to user, you MUST implement this method t
 
 ## Version History
 
+### Version 1.5.4
+ -  UI improvement
+
 ### Version 1.5.3
  -  Not showing default image when there is no poll image
 

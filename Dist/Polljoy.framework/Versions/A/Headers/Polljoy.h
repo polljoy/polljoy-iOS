@@ -48,6 +48,9 @@
  
  2014/06/17, Antony Man - Not showing default image when there is no poll image
  Version 1.5.3
+ 
+ 2014/06/14, Antony Man - UI improvement
+ Version 1.5.4
  */
 
 #import <Foundation/Foundation.h>

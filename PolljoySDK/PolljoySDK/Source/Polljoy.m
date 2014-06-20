@@ -583,7 +583,7 @@ static NSOperationQueue *_backgroundQueue;
 +(void) downloadAppImage:(NSString*) urlString
 {    
     // cache the default image and let it handle by iOS
-    if ((_app.defaultImageUrl !=nil) && (![_app.defaultImageUrl isEqual:[NSNull null]])){
+    if ((_app.defaultImageUrl !=nil) && (![_app.defaultImageUrl isEqual:[NSNull null]]) && ([_app.defaultImageUrl length] >0)){
         PJImageDownloader *imageDownloader = [[PJImageDownloader alloc] init];
         [imageDownloader setUrlString:_app.defaultImageUrl];
         [imageDownloader setCompletionHandler:^(UIImage * image) {
