@@ -61,7 +61,7 @@ You can setup and manage all your polls through a web interface here https://adm
 
  polljoy works in the background to avoid interruption to your app’s main thread.
  
- polljoy requires each app to register a session and obtain the **Session ID** for all communications to the API. To have best performance and integration, we recommend registering the session at application startup. You’ll need your **App ID** (they are available in the web [admin panel](https://admin.polljoy.com)
+ polljoy requires each app to register a session and obtain the **Session ID** for all communications to the API. To have best performance and integration, we recommend registering the session at application startup. You’ll need your **App ID** (they are available in the web [admin panel](https://admin.polljoy.com/applications/app)
  
  To register a session:
  1. Open up your app’s `AppDelegate.m` file
