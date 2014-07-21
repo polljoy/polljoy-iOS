@@ -96,7 +96,10 @@ In your program logic, import `<Polljoy/Polljoy.h>` at the program you want to g
    [Polljoy getPollWithDelegate:self
                      AppVersion:_appVersion
                           level:_level
-                       userType:_userType];
+                        session:_session
+               session:_timeSinceInstall
+                       userType:_userType
+                           tags:_tags];
  // ...
  ```
   
@@ -106,9 +109,15 @@ In summary:
 
 `appVersion`: your app’s version to be used as a poll selection criteria. This should match with your poll setting. Or set it as nil if you are not using.
 
-`Level`: if your app is a game app, this is your game level. This should match with your poll setting. Or set it as 0 if you are not using.
+`level`: if your app is a game app, this is your game level. This should match with your poll setting. Or set it as 0 if you are not using.
+
+`session`: This is used to keep track of how many times the user has started a polljoy session. If your app keeps track of how many times the app has been launched, you can pass that variable here. Otherwise leave it to 0 and the polljoy SDK will handle it. 
+
+`timeSinceInstall`: If your app tracks how long the app has been installed, pass the variable here. Leave it to 0 will let polljoy does the job. (We count in days)
 
 `userType`: your app user type either **Pay** or **Non-Pay**. This is the `ENUM PJUserType` as defined in `Polljoy.h`
+
+`tags`: If you app uses tags to select polls, you pass the tags here. Please remember this has to match your settings in admin panel. Tags are passed in the string format `TAGNAME,TAGNAME#RANGE` For example, if you want to ask the specific question to male users that are 18, you can put a tag like `MALE,AGE#18`
 
 Please check `Polljoy.h` for the type of the parameters. polljoy’s API is open. All data returned is passed back to the delegate. Delegate can use the returned poll data for their own control if needed.
 
