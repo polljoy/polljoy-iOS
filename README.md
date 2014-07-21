@@ -23,7 +23,7 @@ You can setup and manage all your polls through a web interface here https://adm
 
 # Setup your XCode Project
 
-1. Unzip the polljoy framework to your local drive
+1. Download `Dist` folder to your local drive
 2. Drag the `Polljoy.framework` & `Polljoy.bundle` to your project in Xcode 5
 3. Add the following iOS frameworks to link
   * UIKit
