@@ -73,12 +73,25 @@ Each time you call `startSession`, the SDK will increase the session count by 1.
 
 Once the session is started, SDK will cache all app settings including the default image, border image and button image (if any) that you have setup in the [admin panel](https://admin.polljoy.com). After caching, there will be no operation until you request polls from polljoy service.
 
-### Get polls
+### Get poll (simple)
+After you start the session, you can get polls any time and place you want!
 
-After you started the session, you can get polls at any time and place you want!
+In your program logic, import `<Polljoy/Polljoy.h>` where you want to get polls (or you can import in your `.pch` file). Then call:
 
-In your program logic, import `<Polljoy/Polljoy.h>` at the program you want to get polls (or you can import in your `.pch` file). Then call:
+  ``` objective-c
+      [Polljoy getPoll];
+  // use this if you don't need to handle callbacks from polljoy
+  // this will auto show the polls when all polls are ready
+  ```
+  OR
+  ``` objective-c
+    [Polljoy getPollWithDelegate:self];
+  // if you need to handle callbacks from Polljoy
+  ```
 
+`Note: these are simple version if you will only select polls based on session, timeSinceInstall and platform, or not have any seletion criteria.  If you want more than these, use the full version that follows.
+
+###Get poll (full)
  ``` objective-c
  // ...
    [Polljoy getPollWithDelegate:self
@@ -88,68 +101,51 @@ In your program logic, import `<Polljoy/Polljoy.h>` at the program you want to g
                session:_timeSinceInstall
                        userType:_userType
                            tags:_tags];
- // ...
  ```
   
 In summary:
 
-`delegate`: the instance to handle all callbacks from polljoy SDK. The delegate should conform to `PolljoyDelegate` as defined in `Polljoy.h`
+`delegate` (optional) Set to null if not needed. Delegate is the instance to handle all callbacks from polljoy SDK. If used, the delegate should conform to `PolljoyDelegate` as defined in `Polljoy.h`
 
-`appVersion`: your app’s version to be used as a poll selection criteria. This should match with your poll setting. Or set it as nil if you are not using.
+`appVersion` (optional) Set to null if you prefer not to send it.  Or you can choose to pass it. eg 1.0.35
 
-`level`: if your app is a game app, this is your game level. This should match with your poll setting. Or set it as 0 if you are not using.
+`level` (optional) Set as 0 if you prefer not to send it. If your app has levels you can pass them here. eg 34 
 
-`session`: This is used to keep track of how many times the user has started a polljoy session. If your app keeps track of how many times the app has been launched, you can pass that variable here. Otherwise leave it to 0 and the polljoy SDK will handle it. 
+`session` (optional) Set it as 0 and the SDK will send it for you.  Or you can manually send it. eg 3 
 
-`timeSinceInstall`: If your app tracks how long the app has been installed, pass the variable here. Leave it to 0 will let polljoy does the job. (We count in days)
+`timeSinceInstall` (optional) Set it as 0 and the SDK will send it for you.  Or you can manually set it by sending a value for how long the app has been installed (by default, counted in days). eg 5
 
-`userType`: your app user type either **Pay** or **Non-Pay**. This is the `ENUM PJUserType` as defined in `Polljoy.h`
+`userType` Pass back either **Pay** or **Non-Pay**. This is the `ENUM PJUserType` as defined in `Polljoy.java`
 
-`tags`: If you app uses tags to select polls, you pass the tags here. Please remember this has to match your settings in admin panel. Tags are passed in the string format `TAGNAME,TAGNAME#RANGE` For example, if you want to ask the specific question to male users that are 18, you can put a tag like `MALE,AGE#18`
+`tags` (optional) Set to null if you aren't using them.  If your app uses tags to select polls, pass them in string format with as many as you want to send - `TAG,TAG, ... ,TAG`.  TAG is either in the format TAGNAME or TAGNAME:VALUE.  They should match what you defined in the web console. An example of sending back user gender, number of friends and where the poll is being called from could be: `FEMALE,FRIENDS#88,MAINMENU`
 
 Please check `Polljoy.h` for the type of the parameters. polljoy’s API is open. All data returned is passed back to the delegate. Delegate can use the returned poll data for their own control if needed.
 
-`NOTE: if you don’t use any poll selection criteria, you can simply call the following method and let the SDK handle everything.
-
-  ``` objective-c
-  // if you DON’T need to handle callbacks from Polljoy
-  // this will auto show the polls when all polls are ready
-      [Polljoy getPoll];
-  // ...
-  ```
-  OR
-  ``` objective-c
-  // if you need to handle callbacks from Polljoy
-    [Polljoy getPollWithDelegate:self];
-  // ..
-  ```
-  
-### Handle callbacks from SDK
-
-polljoy will inform delegate at different stages when polls are downloaded, ready to show, user responded etc. App can optionally implement the delegate methods to control the app logic. The delegate methods are:
+### Callbacks
+polljoy will inform delegate at different stages when the polls are downloaded, ready to show, user responded etc. Your app can optionally implement the delegate methods to control the app logic. The delegate methods are:
 
  ``` objective-c
  -(void) PJPollNotAvailable:(PJResponseStatus) status;
  ```
  
-When there is no poll match with your selection criteria or no more polls to show in the current session. 
+When there is no poll matching your selection criteria or no more polls to show in the current session.
 
  ``` objective-c
  -(void) PJPollIsReady:(NSArray *) polls;
  ```
  
-After you request for poll and poll/s is/are ready to show (including all defined images are downloaded). Friendly tip - If you are displaying the poll in the middle of an active game or app session that needs real time control, consider to pause your app before presenting the poll UI as needed. 
+When poll/s is/are ready to show (including all associated images). Friendly tip - If you are displaying the poll in the middle of an active game or app session that needs real time control, consider to pause your app before presenting the poll UI as needed. 
 
-polls array returned are all the matched polls for the request. Please refer `PJPoll.h` for the data structure.
+The polls array returned are all the matched polls for the request. Please refer `PJPoll.h` for the data structure.
 When you’re ready to present the poll, call:
 
  ``` objective-c
  [Polljoy showPoll];
  ```
 
-This will present the polljoy UI according to your app color and poll settings. Then polljoy SDK will handle all the remaining tasks for you. These include handling the user’s response, informing delegate for any virtual amount user received, upload result to polljoy service … etc.
+This will present the polljoy UI according to your app style and poll settings. Then the SDK will handle all the remaining tasks for you. These include handling the user’s response, informing delegate for any virtual amount user received, uploading the result to the console … etc.
 
-We highly recommend you implement this delegate method so that you know polls are ready and call polljoy SDK to show the poll or do whatever control you need.
+We recommend you implement this delegate method so you know when polls are ready and call polljoy SDK to show the poll or do whatever control you need.
 
  ``` objective-c
  -(void) PJPollWillShow:(PJPoll*) poll;
@@ -179,16 +175,16 @@ The polljoy poll UI is finished and has dismissed. You can do whatever UI contro
  -(void) PJPollDidResponded:(PJPoll*) poll;
  ```
  
-User has responded to the poll. The poll will contain all the poll data including user’s responses. You can ignore this (the results are displayed in the polljoy.com admin console and able to be exported) or use it as you wish.
-If you issue a virtual currency amount to user, you MUST implement this method to handle the virtual amount issued (especially if your app is game). This is the only callback from SDK that informs the app the virtual amount that the user collected.
+User has responded to the poll. The poll will contain all the poll data including user’s responses. You can ignore this (the results are displayed in the web admin console and able to be exported) or use it as you wish.
+If you issue a virtual currency amount to user, you MUST implement this method to handle the virtual amount issued. This is the only callback from SDK that informs the app the virtual amount that the user collected.
 
  ``` objective-c
  -(void) PJPollDidSkipped:(PJPoll*) poll;
  ```
  
- If the poll is not mandatory, user can choose to skip the poll. You can handle this case or simply ignore it safely.
+ If the poll is not mandatory, the user can choose to skip the poll. You can handle this case or simply ignore it safely.
  
 -
-#### Got questions? Email us at help@polljoy.com
+That's it!  Email us at help@polljoy.com if you have questions or suggestions!
 
-
+ps - a secret passageway appears. [enter it](https://polljoy.com/world.html)
