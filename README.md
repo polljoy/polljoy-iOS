@@ -1,28 +1,17 @@
 ![Picture](http://www.polljoy.com/assets/images/logo/polljoy-logo-github.png)
-> In-app polls made easy. Integrate in 2 lines of code.
 
-#Polljoy iOS Integration Guide
-
-Welcome friend! This guide will get you started with polljoy, fast & easy.
-
-Got questions?  Email us at help@polljoy.com
-
--
-<b>Simple</b> – polljoy is designed to be simple for users and especially developers. Just 2 API calls, you can get your polls running.
-
-<b>Open</b> -The polljoy API is open. The SDK comes with all source code and a test app as well as a compiled iOS framework – `Polljoy.framework` and the resource bundle – `Polljoy.bundle`. You can simply install the SDK as-is to integrate the polljoy service.
-
-<b>Easy</b> – polljoy is easy to use. Check out the test App in the SDK. Test with your own user id and app id. You can see how polljoy works. 
-
-<b>Flexible</b> – the polljoy SDK comes with the required UI to present the poll and do all the tasks for you. But if you want to implement your own UI, you can. The poll data is open. Enjoy!
+In-app polls made easy. Just 2 API calls.
 
 
-# The polljoy Admin Console
-You can setup and manage all your polls through a web interface here https://admin.polljoy.com
+#Intro
+Hi friend! Let's add polljoy to your inspiring iOS app. It's simple, you'll be up in minutes.
 
+Questions? - email help@polljoy.com and one of our devs will assist!
 
-# Setup your XCode Project
+#Web console
+Polls are created and managed through our web interface - https://admin.polljoy.com
 
+#Steps
 1. Download `Dist` folder to your local drive
 2. Drag the `Polljoy.framework` & `Polljoy.bundle` to your project in Xcode 5
 3. Add the following iOS frameworks to link
@@ -57,16 +46,15 @@ You can setup and manage all your polls through a web interface here https://adm
   
   ![Picture] (Doc/bundle.png)
 
-### Implement polljoy in Project
+###Start session
+polljoy works in the background to avoid interrupting your app’s main thread.
 
- polljoy works in the background to avoid interruption to your app’s main thread.
- 
- polljoy requires each app to register a session and obtain the **Session ID** for all communications to the API. To have best performance and integration, we recommend registering the session at application startup. You’ll need your **App ID** (they are available in the web [admin panel](https://admin.polljoy.com/applications/app)
+Each app starts a session and gets the **Session ID** for all communications to the API. To have best performance and integration, we recommend registering the session at startup. You’ll need your **App ID** (grab it in the web [admin panel](https://admin.polljoy.com/applications/app))
  
  To register a session:
  1. Open up your app’s `AppDelegate.m` file
  2. Under `#import "AppDelegate.h"`, import `<Polljoy/Polljoy.h>` file
- 3. Under implementation, call `Polljoy` to start session with your **App ID**
+ 3. Under implementation, call `Polljoy` to start a session with your **App ID**
  
  ``` objective-c
  #import <Polljoy/Polljoy.h>
@@ -79,11 +67,11 @@ You can setup and manage all your polls through a web interface here https://adm
  }
  ```
  
- polljoy SDK will automatically handle all session control and all required information to get the correct poll based on your poll setup in admin panel and save your poll result for analysis. These includes the session ID, session count, time (days) since first call polljoy SDK, device ID, platform, OS version … etc. 
+The SDK will automatically handle all session control and required information to get the correct poll based on your poll setup in admin panel and save your poll result for analysis. These includes the session ID, session count, time (days) since first call polljoy SDK, device ID, platform, OS version … etc.
 
- Each time you call `startSession`, SDK will increase the session count by 1. So, you should only call it once for each app launch to get the session count correct.
- 
- Once the session is started, SDK will cache all app settings including the default image (if any) that you have setup in the [admin panel](https://admin.polljoy.com). After caching, there will be no operation until you request polls from polljoy service.
+Each time you call `startSession`, the SDK will increase the session count by 1. So, you should only call it once for each launch to get the session count correct.
+
+Once the session is started, SDK will cache all app settings including the default image, border image and button image (if any) that you have setup in the [admin panel](https://admin.polljoy.com). After caching, there will be no operation until you request polls from polljoy service.
 
 ### Get polls
 
