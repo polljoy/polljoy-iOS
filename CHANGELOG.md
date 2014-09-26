@@ -1,5 +1,9 @@
 ## Version History
 
+### Version 2.0
+ - support REST API2.0
+ - support image poll and other new features
+ 
 ### Version 1.5.4
  -  UI improvement
 
