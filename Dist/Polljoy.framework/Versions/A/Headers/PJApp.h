@@ -40,6 +40,7 @@
 @property (nonatomic,assign) NSInteger closeButtonLocation;
 @property (nonatomic,assign) NSInteger closeButtonOffsetX;
 @property (nonatomic,assign) NSInteger closeButtonOffsetY;
+@property (nonatomic,assign) BOOL closeButtonEasyClose;
 @property (nonatomic,strong) NSString *deviceId;
 @property (nonatomic,strong) NSString *fontName;
 @property (nonatomic,assign) NSInteger overlayAlpha;

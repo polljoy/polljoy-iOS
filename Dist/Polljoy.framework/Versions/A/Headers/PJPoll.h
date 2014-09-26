@@ -67,6 +67,7 @@ typedef NSUInteger PJPollImageStatus;
 @property (nonatomic,strong) NSString *tags;
 @property (nonatomic,assign) NSInteger appUsageTime;
 @property (nonatomic,strong) NSDictionary *choiceUrl;
+@property (nonatomic,strong) NSDictionary *choiceImageUrl;
 @property (nonatomic,strong) NSString *collectButtonText;
 @property (nonatomic,assign) NSInteger imageCornerRadius;
 @property (nonatomic,assign) NSInteger level;
@@ -81,4 +82,5 @@ typedef NSUInteger PJPollImageStatus;
 @property (nonatomic,strong) NSString *virtualCurrency;
 @property (nonatomic,strong) PJApp *app;
 @property (nonatomic,assign) PJPollImageStatus imagesStatus;
+@property (nonatomic,assign) NSInteger imagePollStatus;
 @end

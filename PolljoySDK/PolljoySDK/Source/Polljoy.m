@@ -11,8 +11,8 @@
 #import "PJImageDownloader.h"
 
 #define PJ_SDK_NAME @"Polljoy"
-#define PJ_API_SANDBOX_endpoint @"https://apisandbox.polljoy.com/poll/"
-#define PJ_API_PRODUCTION_endpoint @"https://api.polljoy.com/poll/"
+#define PJ_API_SANDBOX_endpoint @"https://apisandbox.polljoy.com/2.0/poll/"
+#define PJ_API_PRODUCTION_endpoint @"https://api.polljoy.com/2.0/poll/"
 
 @interface Polljoy () {
     
@@ -59,6 +59,12 @@ static NSOperationQueue *_backgroundQueue;
 
 +(void) startSession:appId newSession:(BOOL) newSession
 {
+    NSString *deviceId = [PolljoyCore getDeviceId];
+    [[self class] startSession:appId deviceId:deviceId newSession:YES];
+}
+
++(void) startSession:appId deviceId:(NSString*) deviceId newSession:(BOOL) newSession
+{
     
     if (appId == nil) {
         NSLog(@"[%@ %@] missing appId:%@", _PJ_CLASS, _PJ_METHOD,appId);
@@ -66,10 +72,10 @@ static NSOperationQueue *_backgroundQueue;
     }
     
     _sessionId = nil;
-    _deviceId = [PolljoyCore getDeviceId];
+    _deviceId = deviceId;
     _deviceModel = [PolljoyCore getDeviceModel];
     _devicePlatform = @"ios";
-    _deviceOS = [[UIDevice currentDevice] systemVersion];
+    _deviceOS = [[UIDevice currentDevice] systemVersion];;
     //_userId = userId;
     _appId = appId;
     _appVersion = @"0";
@@ -152,6 +158,7 @@ static NSOperationQueue *_backgroundQueue;
                                            app.closeButtonLocation=[[appDict objectForKey:@"closeButtonLocation"] integerValue];
                                            app.closeButtonOffsetX=[[appDict objectForKey:@"closeButtonOffsetX"] integerValue];
                                            app.closeButtonOffsetY=[[appDict objectForKey:@"closeButtonOffsetY"] integerValue];
+                                           app.closeButtonEasyClose=[[appDict objectForKey:@"closeButtonEasyClose"] boolValue];
                                            app.deviceId=[appDict objectForKey:@"deviceId"];
                                            app.fontName=[appDict objectForKey:@"fontName"];
                                            app.overlayAlpha=[[appDict objectForKey:@"overlayAlpha"] integerValue];
@@ -185,6 +192,11 @@ static NSOperationQueue *_backgroundQueue;
                                
                                _isRegisteringSession=NO;
                            }];
+}
+
++(void) startSession:(NSString *)appId deviceId:(NSString *) deviceId
+{
+    [[self class] startSession:appId deviceId:deviceId newSession:YES];
 }
 
 +(void) getPoll
@@ -351,7 +363,6 @@ static NSOperationQueue *_backgroundQueue;
                                    NSMutableDictionary *responseObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
                                    
                                    NSNumber *status=[responseObject objectForKey:@"status"];
-                                   //NSNumber *count=[responseObject objectForKey:@"count"];
                                    NSString *message=[responseObject objectForKey:@"message"];
                                    NSArray *pollsArray=[responseObject objectForKey:@"polls"];
 
@@ -409,6 +420,8 @@ static NSOperationQueue *_backgroundQueue;
                                                poll.tags=[request objectForKey:@"tags"];
                                                poll.appUsageTime=[[request objectForKey:@"appUsageTime"] integerValue];
                                                poll.choiceUrl=[request objectForKey:@"choiceUrl"];
+                                               poll.choiceImageUrl=[request objectForKey:@"choiceImageUrl"];
+                                               poll.imagePollStatus = 0;
                                                poll.collectButtonText=[request objectForKey:@"collectButtonText"];
                                                poll.imageCornerRadius=[[request objectForKey:@"imageCornerRadius"] integerValue];
                                                poll.level=[[request objectForKey:@"level"] integerValue];
@@ -457,6 +470,7 @@ static NSOperationQueue *_backgroundQueue;
                                                    _app.closeButtonLocation=[[appDict objectForKey:@"closeButtonLocation"] integerValue];
                                                    _app.closeButtonOffsetX=[[appDict objectForKey:@"closeButtonOffsetX"] integerValue];
                                                    _app.closeButtonOffsetY=[[appDict objectForKey:@"closeButtonOffsetY"] integerValue];
+                                                   _app.closeButtonEasyClose=[[appDict objectForKey:@"closeButtonEasyClose"] boolValue];
                                                    _app.deviceId=[appDict objectForKey:@"deviceId"];
                                                    _app.fontName=[appDict objectForKey:@"fontName"];
                                                    _app.overlayAlpha=[[appDict objectForKey:@"overlayAlpha"] integerValue];
@@ -520,7 +534,7 @@ static NSOperationQueue *_backgroundQueue;
     for (NSString *key in [parameters allKeys]){
         dataString=[dataString stringByAppendingFormat:@"%@=%@&",key,[parameters objectForKey:key]];
     }
-    
+    util_Log(@"[%@ %@] dataString: %@", _PJ_CLASS, _PJ_METHOD, dataString);
     [postBody appendData:[dataString dataUsingEncoding:NSUTF8StringEncoding]];
     
     //post
@@ -703,6 +717,7 @@ static NSOperationQueue *_backgroundQueue;
 
 +(void) showPoll
 {
+    util_Log(@"[%@ %@]",_PJ_CLASS, _PJ_METHOD);
     if ([_polls count] > 0) {
         PJPoll *poll=[_polls objectAtIndex:0];
         [[self class] showPoll:poll];
@@ -882,7 +897,7 @@ static NSOperationQueue *_backgroundQueue;
     }
     
     // check if response has associated external link
-    if ([poll.type isEqualToString:@"M"]) {
+    if ([poll.type isEqualToString:@"M"] || [poll.type isEqualToString:@"I"]) {
         if (poll.choiceUrl != nil){
             NSDictionary *choiceUrl=[poll.choiceUrl objectForKey:response];
             NSString *iosURL = [choiceUrl objectForKey:@"ios"];
@@ -927,10 +942,9 @@ static NSOperationQueue *_backgroundQueue;
     [_polls removeObject:poll];
     
     if ([_polls count] > 0) {
-        if (poll.virtualAmount>0) {
-            if ([_delegate respondsToSelector:@selector(PJPollDidResponded:)]) {
-                [_delegate PJPollDidResponded:poll];
-            }
+        
+        if ([_delegate respondsToSelector:@selector(PJPollDidResponded:)]) {
+            [_delegate PJPollDidResponded:poll];
         }
         
         if ([_delegate respondsToSelector:@selector(PJPollWillDismiss:)]) {

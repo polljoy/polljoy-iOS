@@ -51,6 +51,9 @@
  
  2014/06/14, Antony Man - UI improvement
  Version 1.5.4
+ 
+ 2014/08/20, Antony Man - Supports Image poll, use REST API Vesion 2
+ Version 2.0
  */
 
 #import <Foundation/Foundation.h>
@@ -93,6 +96,7 @@ typedef enum {
 
 @interface Polljoy : NSObject
 +(void) startSession:(NSString *)appId;
++(void) startSession:(NSString *)appId deviceId:(NSString *) deviceId;
 
 +(void) getPoll;
 

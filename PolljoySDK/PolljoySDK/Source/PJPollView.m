@@ -60,6 +60,17 @@
     NSString *borderImageP;
     NSString *buttonImageL;
     NSString *buttonImageP;
+    
+    
+    IBOutlet UIView *ipView;
+    IBOutlet UIButton *ipBtnPreview;
+    IBOutlet UIButton *ipBtnConfirm;
+    IBOutlet UIButton *ipBtn1;
+    IBOutlet UIButton *ipBtn2;
+    IBOutlet UIButton *ipBtn3;
+    IBOutlet UIButton *ipBtn4;
+    NSArray *ipButtons;
+    NSMutableDictionary *imagePollImages;
 }
 
 @end
@@ -97,6 +108,7 @@
         
         myPoll=poll;
         mcButtons = [NSArray arrayWithObjects:mcBtn1, mcBtn2, mcBtn3, mcBtn4, nil];
+        ipButtons = [NSArray arrayWithObjects:ipBtn1, ipBtn2, ipBtn3, ipBtn4, nil];
         
         // setup appearance
         self.backgroundColor = [UIColor clearColor];
@@ -126,7 +138,6 @@
         UIImage *maskedIcon=[closeIcon maskWithColor:poll.app.fontColor];
         [closeBtn setImage:maskedIcon forState:UIControlStateNormal];
     
-        // TODO: no need to mask the color
         UIImage *rewardImage=[UIImage imageWithContentsOfFile:[[PolljoyCore frameworkBundle] pathForResource:@"rewardImage" ofType:@"png"]];
         [rewardImageView setImage:rewardImage];
         
@@ -145,15 +156,32 @@
             }
             mcView.hidden=NO;
             textView.hidden=YES;
+            ipView.hidden=YES;
         }
         else if ([poll.type isEqualToString:@"T"]) {
             [textBtn setTitle:poll.submitButtonText forState:UIControlStateNormal];
             mcView.hidden=YES;
             textView.hidden=NO;
+            ipView.hidden=YES;
+        }
+        else if ([poll.type isEqualToString:@"I"]) {
+            util_Log(@"[%@ %@] image poll images: %@", _PJ_CLASS, _PJ_METHOD, poll.choiceImageUrl);
+            NSArray *choices=poll.choices;
+            NSInteger offset=[ipButtons count] - [choices count];
+
+            for (int i=0;i<[choices count];i++) {
+                UIButton *btn=[ipButtons objectAtIndex:i+offset];
+                btn.hidden=NO;
+                [btn setTitle:[choices objectAtIndex:i] forState:UIControlStateNormal];
+            }
+            mcView.hidden=YES;
+            textView.hidden=YES;
+            ipView.hidden=NO;
         }
         else {
             mcView.hidden=YES;
             textView.hidden=YES;
+            ipView.hidden=YES;
         }
         
         if (poll.virtualAmount > 0) {
@@ -186,6 +214,11 @@
         
         userIsResponded = NO;
         
+        if (poll.app.closeButtonEasyClose) {
+            UIGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(userTapEasyClose:)];
+            [overlayView addGestureRecognizer:gesture];
+            overlayView.userInteractionEnabled = YES;
+        }
     }
     
     return self;
@@ -355,6 +388,69 @@
     
     [pollView addSubview:textView];
     
+    // image poll view
+    ipView=[[UIView alloc] initWithFrame:CGRectMake(0, 195, 240, 165)];
+    ipView.backgroundColor=[UIColor clearColor];
+    
+    ipBtn1=[UIButton buttonWithType:UIButtonTypeCustom];
+    [ipBtn1.titleLabel setAdjustsFontSizeToFitWidth:YES];
+    [ipBtn1 setHidden:YES];
+    [ipBtn1 setFrame:CGRectMake(11, 46, 218, 30)];
+    [ipBtn1 setBackgroundColor:[UIColor clearColor]];
+    [ipBtn1 setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
+    [ipBtn1 setContentMode:UIViewContentModeScaleAspectFit];
+    [ipBtn1 addTarget:self action:@selector(userTapImagePollImage:) forControlEvents:UIControlEventTouchUpInside];
+    [ipView addSubview:ipBtn1];
+    ipBtn2=[UIButton buttonWithType:UIButtonTypeCustom];
+    [ipBtn2.titleLabel setAdjustsFontSizeToFitWidth:YES];
+    [ipBtn2 setHidden:YES];
+    [ipBtn2 setFrame:CGRectMake(11, 46, 218, 30)];
+    [ipBtn2 setBackgroundColor:[UIColor clearColor]];
+    [ipBtn2 setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
+    [ipBtn2 setContentMode:UIViewContentModeScaleAspectFit];
+    [ipBtn2 addTarget:self action:@selector(userTapImagePollImage:) forControlEvents:UIControlEventTouchUpInside];
+    [ipView addSubview:ipBtn2];
+    ipBtn3=[UIButton buttonWithType:UIButtonTypeCustom];
+    [ipBtn3.titleLabel setAdjustsFontSizeToFitWidth:YES];
+    [ipBtn3 setHidden:YES];
+    [ipBtn3 setFrame:CGRectMake(11, 46, 218, 30)];
+    [ipBtn3 setBackgroundColor:[UIColor clearColor]];
+    [ipBtn3 setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
+    [ipBtn3 setContentMode:UIViewContentModeScaleAspectFit];
+    [ipBtn3 addTarget:self action:@selector(userTapImagePollImage:) forControlEvents:UIControlEventTouchUpInside];
+    [ipView addSubview:ipBtn3];
+    ipBtn4=[UIButton buttonWithType:UIButtonTypeCustom];
+    [ipBtn4.titleLabel setAdjustsFontSizeToFitWidth:YES];
+    [ipBtn4 setHidden:YES];
+    [ipBtn4 setFrame:CGRectMake(11, 46, 218, 30)];
+    [ipBtn4 setBackgroundColor:[UIColor clearColor]];
+    [ipBtn4 setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
+    [ipBtn4 setContentMode:UIViewContentModeScaleAspectFit];
+    [ipBtn4 addTarget:self action:@selector(userTapImagePollImage:) forControlEvents:UIControlEventTouchUpInside];
+    [ipView addSubview:ipBtn4];
+    
+    ipBtnPreview=[UIButton buttonWithType:UIButtonTypeCustom];
+    [ipBtnPreview.titleLabel setAdjustsFontSizeToFitWidth:YES];
+    [ipBtnPreview setFrame:CGRectZero];
+    [ipBtnPreview setBackgroundColor:[UIColor whiteColor]];
+    [ipBtnPreview setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
+    [ipBtnPreview setContentMode:UIViewContentModeScaleAspectFit];
+    [ipBtnPreview addTarget:self action:@selector(userConfirmImagePoll:) forControlEvents:UIControlEventTouchUpInside];
+    [ipView addSubview:ipBtnPreview];
+    
+    ipBtnConfirm=[UIButton buttonWithType:UIButtonTypeCustom];
+    [ipBtnConfirm setTitle:NSLocalizedString(@"Confirm", @"Confirm") forState:UIControlStateNormal];
+    [ipBtnConfirm.titleLabel setAdjustsFontSizeToFitWidth:YES];
+    [ipBtnConfirm setFrame:CGRectZero];
+    [ipBtnConfirm setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
+    [ipBtnConfirm setContentMode:UIViewContentModeScaleAspectFit];
+    [ipBtnConfirm addTarget:self action:@selector(userConfirmImagePoll:) forControlEvents:UIControlEventTouchUpInside];
+    ipBtnConfirm.hidden=YES;
+    
+    [ipView addSubview:ipBtnConfirm];
+    
+    [pollView addSubview:ipView];
+    
     collectView=[[UIView alloc] initWithFrame:CGRectMake(0, 195, 240, 165)];
     collectView.backgroundColor=[UIColor clearColor];
     collectBtn=[UIButton buttonWithType:UIButtonTypeCustom];
@@ -390,6 +486,11 @@
     if (!myPoll.isReadyToShow) {
         
         if (PJPollAllImageReady == myPoll.imagesStatus) {
+            
+            if ([myPoll.type isEqualToString:@"I"] && (myPoll.imagePollStatus < [myPoll.choices count])) {
+                return;
+            }
+            
             myPoll.isReadyToShow=YES;
             [self.delegate PJPollViewIsReadyToShow:self poll:myPoll];
         }
@@ -639,6 +740,40 @@
             [self checkImageStatus];
         });
     }
+    
+    // image poll image
+    if ([myPoll.type isEqualToString:@"I"]) {
+        imagePollImages = [NSMutableDictionary dictionary];
+        
+        for (NSString *key in myPoll.choices) {
+            NSString *url = [myPoll.choiceImageUrl objectForKey:key];
+            if ((url != nil) && (![url isEqual:[NSNull null]])){
+                PJImageDownloader *imageDownloader4 = [[PJImageDownloader alloc] init];
+                [imageDownloader4 setUrlString:url];
+                [imageDownloader4 setCompletionHandler:^(UIImage * image) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if (image != nil)
+                            [imagePollImages setObject:image forKey:key];
+                        myPoll.imagePollStatus++;
+                        util_Log(@"[%@ %@] imagePollImage completed: key:%@ / %@", _PJ_CLASS, _PJ_METHOD, key, [imagePollImages objectForKey:key]);
+                        [self checkImageStatus];
+                    });
+                    
+                }];
+                
+                [imageDownloader4 startDownload];
+                
+            }
+            else {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    // TODO: no need to set [imagePollImages setObject:nil forKey:key];
+                    util_Log(@"[%@ %@] imagePollImage cannot find image url: key:%@", _PJ_CLASS, _PJ_METHOD, key);
+                    myPoll.imagePollStatus++;
+                    [self checkImageStatus];
+                });
+            }
+        }
+    }
 }
 
 - (void)layoutSubviews
@@ -800,6 +935,50 @@
     [textBtn.titleLabel setFont:[UIFont systemFontOfSize:fontSize]];
     textBtn.frame=CGRectMake(spacerX, responseTextView.frame.origin.y + responseTextView.frame.size.height + spacer3, buttonSize.width, buttonSize.height);
 
+    if ([myPoll.type isEqualToString:@"I"]) {
+        ipView.frame = CGRectMake(0, 0.326 * innerSize.height, innerSize.width * baseRefDeltaWidthAdjustment, 0.674 * innerSize.height);
+        // image poll view
+        defaultImageView.hidden = YES;
+        
+        // adjust pollText
+        questionLabel.frame = CGRectMake(spacerX, 0.08 * innerSize.height, pollTextSize.width, innerSize.height * (0.1375 + (baseRefDeltaHeightAdjustment - 1)));
+        
+        // adjust reward
+        NSInteger spacerY = questionLabel.frame.origin.y + questionLabel.frame.size.height + (0.1085 * innerSize.height - virtualAmountRewardLabel.frame.size.height - virtualAmount.frame.size.height) / 2;
+        virtualAmountRewardLabel.frame = CGRectMake((ipView.frame.size.width / 2) + 2, spacerY, virtualAmountRewardLabel.frame.size.width, virtualAmountRewardLabel.frame.size.height);
+        virtualAmount.frame = CGRectMake(virtualAmountRewardLabel.frame.origin.x, virtualAmountRewardLabel.frame.origin.y +virtualAmountRewardLabel.frame.size.height, virtualAmount.frame.size.width, virtualAmount.frame.size.height);
+        rewardImageView.frame = CGRectMake((ipView.frame.size.width / 2) - rewardImageView.frame.size.width - 2, virtualAmount.frame.origin.y, rewardImageView.frame.size.width, rewardImageView.frame.size.width);
+        
+        ipBtnPreview.frame = CGRectMake(0.2 * ipView.frame.size.width, 0, 0.6 * ipView.frame.size.width, 0.6 * ipView.frame.size.width);
+        [ipBtnPreview setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
+        
+        [ipBtnConfirm setFrame:CGRectMake(0, 0, 0.5 * ipBtnPreview.frame.size.width, 0.25 * ipBtnPreview.frame.size.height)];
+        ipBtnConfirm.center = ipBtnPreview.center;
+        [self setButtonStyle:ipBtnConfirm];
+        
+       
+        NSInteger offset=[ipButtons count] - [myPoll.choices count];
+        CGSize ipBtnSize = CGSizeMake(0.2 * ipView.frame.size.width, 0.2 * ipView.frame.size.width);
+        CGFloat spacer4 = 0.0167 * ipView.frame.size.width;
+        CGFloat spacer5 = (0.9666 * ipView.frame.size.width - [myPoll.choices count] * ipBtnSize.width) /  ([myPoll.choices count] + 1);
+        CGFloat spacer6 = (ipView.frame.size.height - ipBtnPreview.frame.size.height - ipBtnSize.height) /2 ;
+        
+        for (int i=0;i<[myPoll.choices count];i++) {
+            UIButton *btn=[ipButtons objectAtIndex:i + offset];
+            btn.hidden=NO;
+            [btn setTitle:[myPoll.choices objectAtIndex:i] forState:UIControlStateNormal];
+            [btn setImage:[imagePollImages objectForKey:[myPoll.choices objectAtIndex:i]] forState:UIControlStateNormal];
+            btn.frame = CGRectMake(spacer4 + spacer5 + i * (spacer5 + ipBtnSize.width), ipBtnPreview.frame.size.height + spacer6, ipBtnSize.width, ipBtnSize.height);
+            
+            if (i==0) {
+                [ipBtnPreview setTitle:[btn titleForState:UIControlStateNormal] forState:UIControlStateNormal];
+                [ipBtnPreview setImage:[btn imageForState:UIControlStateNormal] forState:UIControlStateNormal];
+            }
+        }
+
+
+    }
+    
     // collect button
     collectView.frame=mcView.frame;
     [collectRewardImageView setImage:rewardImageView.image];
@@ -893,7 +1072,7 @@
     // resize and layout poll view
     pollView.frame = CGRectMake(0, 0, innerSize.width * baseRefDeltaWidthAdjustment, innerSize.height * baseRefDeltaHeightAdjustment);
     
-    if (myPoll.app.closeButtonLocation == 0) {
+    if ((myPoll.app.closeButtonLocation == 0) && ![myPoll.type isEqualToString:@"I"]) {
         defaultImageView.frame = CGRectMake(innerSize.width - (pollImageSize.width + spacer1), spacer1, pollImageSize.width, pollImageSize.height);
     
         // top left
@@ -1030,6 +1209,54 @@
         virtualAmountRewardLabel.center = CGPointMake(centerX, virtualAmountRewardLabel.center.y);
     }
 
+    if ([myPoll.type isEqualToString:@"I"]) {
+        ipView.frame = CGRectMake(0, 0.34167 * innerSize.height * baseRefDeltaHeightAdjustment, innerSize.width * baseRefDeltaWidthAdjustment, 0.65833 * innerSize.height * baseRefDeltaHeightAdjustment);
+
+        // image poll view
+        defaultImageView.hidden = YES;
+/*
+        // adjust pollText
+        questionLabel.frame = CGRectMake(spacerX, 0.08 * innerSize.height, pollTextSize.width, innerSize.height * (0.1375 + (baseRefDeltaHeightAdjustment - 1)));
+*/
+        // adjust reward
+        NSInteger spacerY = questionLabel.center.y - virtualAmountRewardLabel.frame.size.height;
+        virtualAmountRewardLabel.frame = CGRectMake(virtualAmount.frame.origin.x, spacerY, virtualAmountRewardLabel.frame.size.width, virtualAmountRewardLabel.frame.size.height);
+        virtualAmount.frame = CGRectMake(virtualAmountRewardLabel.frame.origin.x, virtualAmountRewardLabel.frame.origin.y +virtualAmountRewardLabel.frame.size.height, virtualAmount.frame.size.width, virtualAmount.frame.size.height);
+        rewardImageView.frame = CGRectMake(rewardImageView.frame.origin.x , virtualAmount.frame.origin.y, rewardImageView.frame.size.width, rewardImageView.frame.size.width);
+ 
+        CGFloat spacer4 = (ipView.frame.size.width - (2 * 0.55 * innerSize.height * baseRefDeltaHeightAdjustment)) / 3;
+        CGFloat spacer4Y = (ipView.frame.size.height -  0.55 * innerSize.height * baseRefDeltaHeightAdjustment) / 2;
+        ipBtnPreview.frame = CGRectMake(spacer4, spacer4Y, 0.55 * innerSize.height * baseRefDeltaHeightAdjustment, 0.55 * innerSize.height * baseRefDeltaHeightAdjustment);
+        [ipBtnPreview setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
+        
+        [ipBtnConfirm setFrame:CGRectMake(0, 0, 0.5 * ipBtnPreview.frame.size.width, 0.25 * ipBtnPreview.frame.size.height)];
+        ipBtnConfirm.center = ipBtnPreview.center;
+        [self setButtonStyle:ipBtnConfirm];
+        
+        
+        NSInteger offset=[ipButtons count] - [myPoll.choices count];
+        CGSize ipBtnSize = CGSizeMake(0.26 * innerSize.height * baseRefDeltaHeightAdjustment, 0.26 * innerSize.height * baseRefDeltaHeightAdjustment);
+        CGFloat spacer5 = 0.03 * innerSize.height * baseRefDeltaHeightAdjustment;
+        
+        ipBtn4.frame = CGRectMake(spacer4 + ipBtnPreview.frame.size.width + spacer4, spacer4Y, ipBtnSize.width, ipBtnSize.height);
+        ipBtn3.frame = CGRectMake(spacer4 + ipBtnPreview.frame.size.width + spacer4, spacer4Y + ipBtnSize.height + spacer5, ipBtnSize.width, ipBtnSize.height);
+        ipBtn2.frame = CGRectMake(spacer4 + ipBtnPreview.frame.size.width + spacer4 + ipBtnSize.width + spacer5, spacer4Y, ipBtnSize.width, ipBtnSize.height);
+        ipBtn1.frame = CGRectMake(spacer4 + ipBtnPreview.frame.size.width + spacer4 + ipBtnSize.width + spacer5, spacer4Y + ipBtnSize.height + spacer5, ipBtnSize.width, ipBtnSize.height);
+        
+        for (int i=0;i<[myPoll.choices count];i++) {
+            UIButton *btn=[ipButtons objectAtIndex:i + offset];
+            btn.hidden=NO;
+            [btn setTitle:[myPoll.choices objectAtIndex:i] forState:UIControlStateNormal];
+            [btn setImage:[imagePollImages objectForKey:[myPoll.choices objectAtIndex:i]] forState:UIControlStateNormal];
+            
+            if (i==0) {
+                [ipBtnPreview setTitle:[btn titleForState:UIControlStateNormal] forState:UIControlStateNormal];
+                [ipBtnPreview setImage:[btn imageForState:UIControlStateNormal] forState:UIControlStateNormal];
+            }
+        }
+        
+        
+    }
 }
 
 - (void)didMoveToSuperview {
@@ -1137,11 +1364,14 @@
         myPoll.response=[button titleForState:UIControlStateNormal];
     }
     
+    util_Log(@"[%@ %@] title: %@", _PJ_CLASS, _PJ_METHOD, [button titleForState:UIControlStateNormal]);
+    
     userIsResponded=YES;
     
     closeBtn.hidden=NO;
     mcView.hidden=YES;
     textView.hidden=YES;
+    ipView.hidden=YES;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.delegate PJPollViewDidAnswered:self poll:myPoll];
     });
@@ -1166,6 +1396,40 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.delegate PJPollViewCloseAfterReponse:self poll:myPoll];
      });
+}
+
+-(IBAction)userTapImagePollImage:(id)sender{
+    UIButton *button=(UIButton*) sender;
+    UIImage *image=[button imageForState:UIControlStateNormal];
+    NSString *choice=[button titleForState:UIControlStateNormal];
+    
+    if ([ipBtnPreview imageForState:UIControlStateNormal] != [button imageForState:UIControlStateNormal]) {
+        [ipBtnPreview setImage:image forState:UIControlStateNormal];
+        [ipBtnPreview setTitle:choice forState:UIControlStateNormal];
+        
+        ipBtnConfirm.hidden=YES;
+    }
+    else {
+        ipBtnConfirm.hidden=NO;
+    }
+}
+
+-(IBAction)userConfirmImagePoll:(id)sender {
+    UIButton *button=(UIButton*) sender;
+    
+    if (button==ipBtnConfirm) {
+        // user confirmed, process response submission
+        [self userReponded:ipBtnPreview];
+    }
+    else {
+        ipBtnConfirm.hidden=NO;
+    }
+}
+
+-(IBAction)userTapEasyClose:(UIGestureRecognizer *) gestureRecognizer {
+    
+    [self userSkipped:closeBtn];
+    
 }
 
 #pragma mark - Notifications
