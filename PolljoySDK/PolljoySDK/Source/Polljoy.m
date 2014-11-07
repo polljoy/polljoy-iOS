@@ -209,9 +209,9 @@ static NSOperationQueue *_backgroundQueue;
 {
     [[self class] getPollWithDelegate:delegate
                            appVersion:nil
-                                level:0
-                              session:0
-                     timeSinceInstall:0
+                                level:_level
+                              session:_session
+                     timeSinceInstall:_timeSinceInstall
                              userType:PJNonPayUser];
 }
 
@@ -223,8 +223,8 @@ static NSOperationQueue *_backgroundQueue;
     [[self class] getPollWithDelegate:delegate
                            appVersion:version
                                 level:level
-                              session:0
-                     timeSinceInstall:0
+                              session:_session
+                     timeSinceInstall:_timeSinceInstall
                              userType:userType];
 }
 

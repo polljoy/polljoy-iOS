@@ -98,7 +98,6 @@
 		0ACABF3018F6A63A0018D6DD /* PJDebugUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PJDebugUtil.h; sourceTree = "<group>"; };
 		0AD7A13E18F81F3100C9C742 /* PJPollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PJPollView.h; sourceTree = "<group>"; };
 		0AD7A13F18F81F3100C9C742 /* PJPollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PJPollView.m; sourceTree = "<group>"; };
-		0AF2DDEA19A48C2200B6EAF0 /* PJImagePoll.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PJImagePoll.xib; path = PolljoySDK/Source/PJImagePoll.xib; sourceTree = SOURCE_ROOT; };
 		0AF90DC918FAB34000B2CAAC /* polljoy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = polljoy.png; sourceTree = "<group>"; };
 		0AF90DCF18FAF53F00B2CAAC /* PJImageDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PJImageDownloader.h; sourceTree = "<group>"; };
 		0AF90DD018FAF53F00B2CAAC /* PJImageDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PJImageDownloader.m; sourceTree = "<group>"; };
@@ -204,7 +203,6 @@
 				0A1545BA1942EB0600CADC5F /* closeButton.png */,
 				0A1545B81942E3FB00CADC5F /* rewardImage.png */,
 				0AF90DC918FAB34000B2CAAC /* polljoy.png */,
-				0AF2DDEA19A48C2200B6EAF0 /* PJImagePoll.xib */,
 			);
 			path = PolljoyResources;
 			sourceTree = "<group>";
@@ -308,7 +306,7 @@
 		0A1CF61F18F55AF300658A68 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0600;
 				ORGANIZATIONNAME = "Grand Heart Ltd";
 			};
 			buildConfigurationList = 0A1CF62218F55AF300658A68 /* Build configuration list for PBXProject "PolljoySDK" */;

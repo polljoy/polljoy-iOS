@@ -54,6 +54,9 @@
  
  2014/08/20, Antony Man - Supports Image poll, use REST API Vesion 2
  Version 2.0
+ 
+ 2014/11/07 Antony Man - bug fix
+ Version 2.0.1
  */
 
 #import <Foundation/Foundation.h>
