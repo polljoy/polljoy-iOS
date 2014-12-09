@@ -57,6 +57,10 @@
  
  2014/11/07 Antony Man - bug fix
  Version 2.0.1
+ 
+ 2014/11/07 Antony Man - support getting prerequisite polls at the same queue
+ Version 2.1
+ 
  */
 
 #import <Foundation/Foundation.h>

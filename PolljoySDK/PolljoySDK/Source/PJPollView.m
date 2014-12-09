@@ -853,10 +853,10 @@
     
     // close button
     CGFloat spacer4 = innerSize.height * 0.01875;
-    CGSize closeButtonSize = CGSizeMake(innerSize.height * 0.0375, innerSize.height * 0.0375);
+    CGSize closeButtonSize = CGSizeMake(innerSize.height * 0.0375 * 2, innerSize.height * 0.0375 * 2);
     
     // reward
-    CGSize rewardImageSize = CGSizeMake(innerSize.height * 0.0313, innerSize.height * 0.0313);
+    CGSize rewardImageSize = CGSizeMake(innerSize.height * 0.0313 * 2, innerSize.height * 0.0313 * 2);
     CGSize rewardTextSize = CGSizeMake(innerSize.height * 0.0625 , 14);
     
     // poll question
@@ -881,7 +881,7 @@
         closeBtn.frame = CGRectMake(spacer4 + (baseScale * myPoll.app.closeButtonOffsetX/2), spacer4 + (baseScale *myPoll.app.closeButtonOffsetY/2), closeButtonSize.width, closeButtonSize.height);
         
         // reward image
-        rewardImageView.frame=CGRectMake(5+defaultImageView.frame.origin.x + defaultImageView.frame.size.width, defaultImageView.frame.origin.y+defaultImageView.frame.size.height/2, rewardImageSize.width, rewardImageSize.height);
+        rewardImageView.frame=CGRectMake(5+defaultImageView.frame.origin.x + defaultImageView.frame.size.width, defaultImageView.frame.origin.y+(defaultImageView.frame.size.height - rewardImageSize.height)/2, rewardImageSize.width, rewardImageSize.height);
         [virtualAmountRewardLabel sizeToFit];
     }
     else {
@@ -889,14 +889,14 @@
         closeBtn.frame = CGRectMake(innerSize.width * baseRefDeltaWidthAdjustment  - (spacer4 + closeButtonSize.width + (baseScale * myPoll.app.closeButtonOffsetX/2)), spacer4 + (baseScale * myPoll.app.closeButtonOffsetY/2), closeButtonSize.width, closeButtonSize.height);
         
         // reward image
-        rewardImageView.frame=CGRectMake(5, defaultImageView.frame.origin.y+defaultImageView.frame.size.height/2, rewardImageSize.width, rewardImageSize.height);
+        rewardImageView.frame=CGRectMake(5, defaultImageView.frame.origin.y+(defaultImageView.frame.size.height - rewardImageSize.height)/2, rewardImageSize.width, rewardImageSize.height);
 
     }
     // adjust frame to have bigger button for easy touch
     closeBtn.frame = CGRectInset(closeBtn.frame, -closeBtn.layer.borderWidth, -closeBtn.layer.borderWidth);
     
     // reward text
-    virtualAmount.frame=CGRectMake(5 + rewardImageView.frame.origin.x + rewardImageView.frame.size.width, rewardImageView.frame.origin.y, rewardTextSize.width, rewardTextSize.height);
+    virtualAmount.frame=CGRectMake(5 + rewardImageView.frame.origin.x + rewardImageView.frame.size.width, rewardImageView.frame.origin.y + (rewardImageView.frame.size.height /2), rewardTextSize.width, rewardTextSize.height);
     [virtualAmount setFont:[UIFont systemFontOfSize:rewardFontSize]];
     [virtualAmount sizeToFit];
     [virtualAmountRewardLabel setFont:[UIFont systemFontOfSize:rewardFontSize]];
@@ -947,7 +947,7 @@
         NSInteger spacerY = questionLabel.frame.origin.y + questionLabel.frame.size.height + (0.1085 * innerSize.height - virtualAmountRewardLabel.frame.size.height - virtualAmount.frame.size.height) / 2;
         virtualAmountRewardLabel.frame = CGRectMake((ipView.frame.size.width / 2) + 2, spacerY, virtualAmountRewardLabel.frame.size.width, virtualAmountRewardLabel.frame.size.height);
         virtualAmount.frame = CGRectMake(virtualAmountRewardLabel.frame.origin.x, virtualAmountRewardLabel.frame.origin.y +virtualAmountRewardLabel.frame.size.height, virtualAmount.frame.size.width, virtualAmount.frame.size.height);
-        rewardImageView.frame = CGRectMake((ipView.frame.size.width / 2) - rewardImageView.frame.size.width - 2, virtualAmount.frame.origin.y, rewardImageView.frame.size.width, rewardImageView.frame.size.width);
+        rewardImageView.frame = CGRectMake((ipView.frame.size.width / 2) - rewardImageView.frame.size.width - 2, virtualAmountRewardLabel.frame.origin.y - (rewardImageView.frame.size.width - (virtualAmount.frame.size.height + virtualAmountRewardLabel.frame.size.height )) / 2 , rewardImageView.frame.size.width, rewardImageView.frame.size.width);
         
         ipBtnPreview.frame = CGRectMake(0.2 * ipView.frame.size.width, 0, 0.6 * ipView.frame.size.width, 0.6 * ipView.frame.size.width);
         [ipBtnPreview setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
@@ -985,10 +985,10 @@
     [collectTextLabel setFont:[UIFont systemFontOfSize:fontSize]];
     [collectTextLabel sizeToFit];
     CGPoint center=responseTextView.center;
-    CGFloat y=center.y - collectRewardImageView.frame.size.height/2;
-    CGFloat x=(collectView.frame.size.width - (collectRewardImageView.frame.size.width + 5 + collectTextLabel.frame.size.width))/2;
-    collectRewardImageView.frame=CGRectMake(x, y, collectTextLabel.frame.size.height, collectTextLabel.frame.size.height);
-    collectTextLabel.frame=CGRectMake(collectRewardImageView.frame.origin.x+collectRewardImageView.frame.size.width+5, y, collectTextLabel.frame.size.width, collectTextLabel.frame.size.height);
+    CGFloat y=center.y - collectTextLabel.frame.size.height;
+    CGFloat x=(collectView.frame.size.width - (collectTextLabel.frame.size.height * 2 + 5 + collectTextLabel.frame.size.width))/2;
+    collectRewardImageView.frame=CGRectMake(x, y, collectTextLabel.frame.size.height * 2, collectTextLabel.frame.size.height * 2);
+    collectTextLabel.frame=CGRectMake(collectRewardImageView.frame.origin.x+collectRewardImageView.frame.size.width+5, y + (collectRewardImageView.frame.size.height - collectTextLabel.frame.size.height) / 2, collectTextLabel.frame.size.width, collectTextLabel.frame.size.height);
     [collectTextLabel setFont:[UIFont systemFontOfSize:fontSize]];
     [self setButtonStyle:collectBtn];
     collectBtn.layer.shadowOffset = buttonShadowSize;
@@ -1051,10 +1051,10 @@
     
     // close button
     CGFloat spacer2 = innerSize.height * 0.025;
-    CGSize closeButtonSize = CGSizeMake(innerSize.height * 0.05, innerSize.height * 0.05);
+    CGSize closeButtonSize = CGSizeMake(innerSize.height * 0.05 * 2, innerSize.height * 0.05 * 2);
     
     // reward
-    CGSize rewardImageSize = CGSizeMake(innerSize.height * 0.066 , innerSize.height * 0.066);
+    CGSize rewardImageSize = CGSizeMake(innerSize.height * 0.066 * 2 , innerSize.height * 0.066 * 2);
     CGSize rewardTextSize = CGSizeMake(pollImageSize.width+closeBtn.layer.borderWidth , rewardImageSize.height+closeBtn.layer.borderWidth);
     
     // poll question
@@ -1112,9 +1112,9 @@
         [collectTextLabel setFont:[UIFont systemFontOfSize:fontSize]];
         [collectTextLabel sizeToFit];
         CGPoint center=responseTextView.center;
-        CGFloat y=center.y - collectRewardImageView.frame.size.height/2;
-        CGFloat x=(collectView.frame.size.width - (collectRewardImageView.frame.size.width + 5 + collectTextLabel.frame.size.width))/2;
-        collectRewardImageView.frame=CGRectMake(x, y, collectTextLabel.frame.size.height, collectTextLabel.frame.size.height);
+        CGFloat y=center.y - collectTextLabel.frame.size.height;
+        CGFloat x=(collectView.frame.size.width - (collectTextLabel.frame.size.height * 2 + 5 + collectTextLabel.frame.size.width))/2;
+        collectRewardImageView.frame=CGRectMake(x, y, collectTextLabel.frame.size.height * 2, collectTextLabel.frame.size.height * 2);
         collectTextLabel.frame=CGRectMake(collectRewardImageView.frame.origin.x+collectRewardImageView.frame.size.width+5, y, collectTextLabel.frame.size.width, collectTextLabel.frame.size.height);
         [collectTextLabel setFont:[UIFont systemFontOfSize:fontSize]];
         [self setButtonStyle:collectBtn];
@@ -1124,7 +1124,7 @@
 
         // reward image and text
         rewardImageView.frame=CGRectMake(defaultImageView.frame.origin.x, (pollView.frame.size.height - defaultImageView.frame.origin.y - defaultImageView.frame.size.height)/2 + defaultImageView.frame.size.height, rewardImageSize.width, rewardImageSize.height);
-        virtualAmount.frame=CGRectMake(5+rewardImageView.frame.origin.x + rewardImageView.frame.size.width, rewardImageView.frame.origin.y, rewardTextSize.width, rewardTextSize.height);
+        virtualAmount.frame=CGRectMake(5+rewardImageView.frame.origin.x + rewardImageView.frame.size.width, rewardImageView.frame.origin.y + (rewardImageView.frame.size.height /2), rewardTextSize.width, rewardTextSize.height);
         [virtualAmount setFont:[UIFont systemFontOfSize:rewardFontSize]];
         [virtualAmount sizeToFit];
         [virtualAmountRewardLabel setFont:[UIFont systemFontOfSize:rewardFontSize]];
@@ -1133,12 +1133,13 @@
         [virtualAmountRewardLabel sizeToFit];
         
         // adjust x offset to center
-        CGFloat centerX = defaultImageView.center.x;
+        //CGFloat centerX = defaultImageView.center.x;
         CGFloat totalWidth=virtualAmount.frame.size.width + 5 + rewardImageView.frame.size.width;
         CGFloat deltaX=(pollImageSize.width - totalWidth)/2;
         rewardImageView.frame = CGRectOffset(rewardImageView.frame, deltaX, 0);
         virtualAmount.frame = CGRectOffset(virtualAmount.frame, deltaX, 0);
-        virtualAmountRewardLabel.center = CGPointMake(centerX, virtualAmountRewardLabel.center.y);
+        virtualAmountRewardLabel.frame = CGRectOffset(virtualAmountRewardLabel.frame, deltaX, 0);
+        //virtualAmountRewardLabel.center = CGPointMake(centerX, virtualAmountRewardLabel.center.y);
      }
     else {
         // top right
@@ -1180,10 +1181,10 @@
         [collectTextLabel setFont:[UIFont systemFontOfSize:fontSize]];
         [collectTextLabel sizeToFit];
         CGPoint center=responseTextView.center;
-        CGFloat y=center.y - collectRewardImageView.frame.size.height/2;
-        CGFloat x=(collectView.frame.size.width - (collectRewardImageView.frame.size.width + 5 + collectTextLabel.frame.size.width))/2;
-        collectRewardImageView.frame=CGRectMake(x, y, collectTextLabel.frame.size.height, collectTextLabel.frame.size.height);
-        collectTextLabel.frame=CGRectMake(collectRewardImageView.frame.origin.x+collectRewardImageView.frame.size.width+5, y, collectTextLabel.frame.size.width, collectTextLabel.frame.size.height);
+        CGFloat y=center.y - collectTextLabel.frame.size.height;
+        CGFloat x=(collectView.frame.size.width - (collectTextLabel.frame.size.height * 2 + 5 + collectTextLabel.frame.size.width))/2;
+        collectRewardImageView.frame=CGRectMake(x, y, collectTextLabel.frame.size.height * 2, collectTextLabel.frame.size.height * 2);
+        collectTextLabel.frame=CGRectMake(collectRewardImageView.frame.origin.x+collectRewardImageView.frame.size.width+5, y + (collectRewardImageView.frame.size.height - collectTextLabel.frame.size.height) / 2, collectTextLabel.frame.size.width, collectTextLabel.frame.size.height);
         [collectTextLabel setFont:[UIFont systemFontOfSize:fontSize]];
         [self setButtonStyle:collectBtn];
         collectBtn.layer.shadowOffset = buttonShadowSize;
@@ -1192,7 +1193,7 @@
         
         // reward image and text
         rewardImageView.frame=CGRectMake(defaultImageView.frame.origin.x, (pollView.frame.size.height - defaultImageView.frame.origin.y - defaultImageView.frame.size.height)/2 + defaultImageView.frame.size.height, rewardImageSize.width, rewardImageSize.height);
-        virtualAmount.frame=CGRectMake(5+rewardImageView.frame.origin.x + rewardImageView.frame.size.width, rewardImageView.frame.origin.y, rewardTextSize.width, rewardTextSize.height);
+        virtualAmount.frame=CGRectMake(5+rewardImageView.frame.origin.x + rewardImageView.frame.size.width, rewardImageView.frame.origin.y + (rewardImageView.frame.size.height /2), rewardTextSize.width, rewardTextSize.height);
         [virtualAmount setFont:[UIFont systemFontOfSize:rewardFontSize]];
         [virtualAmount sizeToFit];
         [virtualAmountRewardLabel setFont:[UIFont systemFontOfSize:rewardFontSize]];
@@ -1201,12 +1202,13 @@
         [virtualAmountRewardLabel sizeToFit];
         
         // adjust x offset to center
-        CGFloat centerX = defaultImageView.center.x;
+        //CGFloat centerX = defaultImageView.center.x;
         CGFloat totalWidth=virtualAmount.frame.size.width + 5 + rewardImageView.frame.size.width;
         CGFloat deltaX=(pollImageSize.width - totalWidth)/2;
         rewardImageView.frame = CGRectOffset(rewardImageView.frame, deltaX, 0);
         virtualAmount.frame = CGRectOffset(virtualAmount.frame, deltaX, 0);
-        virtualAmountRewardLabel.center = CGPointMake(centerX, virtualAmountRewardLabel.center.y);
+        virtualAmountRewardLabel.frame = CGRectOffset(virtualAmountRewardLabel.frame, deltaX, 0);
+        //virtualAmountRewardLabel.center = CGPointMake(centerX, virtualAmountRewardLabel.center.y);
     }
 
     if ([myPoll.type isEqualToString:@"I"]) {
@@ -1223,6 +1225,7 @@
         virtualAmountRewardLabel.frame = CGRectMake(virtualAmount.frame.origin.x, spacerY, virtualAmountRewardLabel.frame.size.width, virtualAmountRewardLabel.frame.size.height);
         virtualAmount.frame = CGRectMake(virtualAmountRewardLabel.frame.origin.x, virtualAmountRewardLabel.frame.origin.y +virtualAmountRewardLabel.frame.size.height, virtualAmount.frame.size.width, virtualAmount.frame.size.height);
         rewardImageView.frame = CGRectMake(rewardImageView.frame.origin.x , virtualAmount.frame.origin.y, rewardImageView.frame.size.width, rewardImageView.frame.size.width);
+        rewardImageView.frame = CGRectMake(rewardImageView.frame.origin.x , questionLabel.center.y - rewardImageView.frame.size.width / 2, rewardImageView.frame.size.width, rewardImageView.frame.size.width);
  
         CGFloat spacer4 = (ipView.frame.size.width - (2 * 0.55 * innerSize.height * baseRefDeltaHeightAdjustment)) / 3;
         CGFloat spacer4Y = (ipView.frame.size.height -  0.55 * innerSize.height * baseRefDeltaHeightAdjustment) / 2;

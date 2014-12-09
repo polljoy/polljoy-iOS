@@ -306,8 +306,8 @@
 		0A1CF61F18F55AF300658A68 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0600;
-				ORGANIZATIONNAME = "Grand Heart Ltd";
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = "polljoy limited";
 			};
 			buildConfigurationList = 0A1CF62218F55AF300658A68 /* Build configuration list for PBXProject "PolljoySDK" */;
 			compatibilityVersion = "Xcode 3.2";

@@ -11,13 +11,13 @@
 #import "PJImageDownloader.h"
 
 #define PJ_SDK_NAME @"Polljoy"
-#define PJ_API_SANDBOX_endpoint @"https://apisandbox.polljoy.com/2.0/poll/"
-#define PJ_API_PRODUCTION_endpoint @"https://api.polljoy.com/2.0/poll/"
+#define PJ_API_SANDBOX_endpoint @"https://apisandbox.polljoy.com/2.1/poll/"
+#define PJ_API_PRODUCTION_endpoint @"https://api.polljoy.com/2.1/poll/"
 
-@interface Polljoy () {
+@interface Polljoy (internal) {
     
 }
-
++(NSDictionary *) setChildPolls: (NSDictionary *) childPolls withApp: (PJApp *) app;
 @end
 
 static NSString *PJ_API_endpoint=PJ_API_PRODUCTION_endpoint;
@@ -104,7 +104,7 @@ static NSOperationQueue *_backgroundQueue;
     
     //create the body
     NSMutableData *postBody = [NSMutableData data];
-    NSString *dataString=[NSString stringWithFormat:@"appId=%@&deviceId=%@",_appId,_deviceId];
+    NSString *dataString=[NSString stringWithFormat:@"appId=%@&deviceId=%@&deviceModel=%@&osVersion=%@",_appId,_deviceId,_deviceModel,[@"iOS " stringByAppendingString:_deviceOS]];
     [postBody appendData:[dataString dataUsingEncoding:NSUTF8StringEncoding]];
     
     //post
@@ -354,6 +354,7 @@ static NSOperationQueue *_backgroundQueue;
     //post
     [request setHTTPBody:postBody];
     
+    util_Log(@"[%@ %@] start getting polls", _PJ_CLASS, _PJ_METHOD);
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:_backgroundQueue
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
@@ -375,65 +376,7 @@ static NSOperationQueue *_backgroundQueue;
                                            for ( NSDictionary *pollRequest in pollsArray) {
                                                NSDictionary *request=[pollRequest objectForKey:@"PollRequest"];
                                                
-                                               PJPoll *poll=[[PJPoll alloc] init];
-                                               poll.appId=[request objectForKey:@"appId"];
-                                               poll.pollId=[[request objectForKey:@"pollId"] integerValue];
-                                               poll.desiredResponses=[[request objectForKey:@"desiredResponses"] integerValue];
-                                               poll.totalResponses=[[request objectForKey:@"totalResponses"] integerValue];
-                                               poll.active=[[request objectForKey:@"active"] boolValue];
-                                               poll.pollText=[request objectForKey:@"pollText"];
-                                               poll.type=[request objectForKey:@"type"];
-                                               poll.priority=[request objectForKey:@"priority"];
-                                               poll.choice=[request objectForKey:@"choice"];
-                                               poll.randomOrder=[[request objectForKey:@"randomOrder"] boolValue];
-                                               poll.mandatory=[[request objectForKey:@"mandatory"] boolValue];
-                                               poll.virtualAmount=[request objectForKey:@"virtualAmount"]!=[NSNull null]?[[request objectForKey:@"virtualAmount"] integerValue]:0;
-                                               poll.userType=[request objectForKey:@"userType"];
-                                               poll.pollPlatform=[request objectForKey:@"pollPlatform"];
-                                               poll.versionStart=[request objectForKey:@"versionStart"];
-                                               poll.versionEnd=[request objectForKey:@"versionEnd"];
-                                               poll.levelStart=[request objectForKey:@"levelStart"] !=[NSNull null]?[[request objectForKey:@"levelStart"] integerValue]:0;
-                                               poll.levelEnd=[request objectForKey:@"levelEnd"]!=[NSNull null]?[[request objectForKey:@"levelEnd"] integerValue]:0;
-                                               poll.sessionStart=[request objectForKey:@"sessionStart"]!=[NSNull null]?[[request objectForKey:@"sessionStart"] integerValue]:0;
-                                               poll.sessionEnd=[request objectForKey:@"sessionEnd"]!=[NSNull null]?[[request objectForKey:@"sessionEnd"] integerValue]:0;
-                                               poll.timeSinceInstallStart=[request objectForKey:@"timeSinceInstallStart"]!=[NSNull null]?[[request objectForKey:@"timeSinceInstallStart"] integerValue]:0;
-                                               poll.timeSinceInstallEnd=[request objectForKey:@"timeSinceInstallEnd"]!=[NSNull null]?[[request objectForKey:@"timeSinceInstallEnd"] integerValue]:0;
-                                               poll.customMessage=[request objectForKey:@"customMessage"];
-                                               poll.pollImageUrl=[request objectForKey:@"pollImageUrl"];
-                                               poll.userId=[[request objectForKey:@"userId"] integerValue];
-                                               poll.appImageUrl=[request objectForKey:@"appImageUrl"];
-                                               poll.backgroundColor=[PolljoyCore colorFromHexString:[request objectForKey:@"backgroundColor"]];
-                                               poll.borderColor=[PolljoyCore colorFromHexString:[request objectForKey:@"borderColor"]];
-                                               poll.fontColor=[PolljoyCore colorFromHexString:[request objectForKey:@"fontColor"]];
-                                               poll.buttonColor=[PolljoyCore colorFromHexString:[request objectForKey:@"buttonColor"]];
-                                               poll.maximumPollPerSession=[[request objectForKey:@"maxPollPerSession"] integerValue];
-                                               poll.maximumPollPerDay=[[request objectForKey:@"maxPollPerDay"] integerValue];
-                                               poll.maximumPollInARow=[[request objectForKey:@"maxPollInARow"] integerValue];
-                                               poll.sessionId=[request objectForKey:@"sessionId"];
-                                               poll.platform=[request objectForKey:@"platform"];
-                                               poll.osVersion=[request objectForKey:@"osVersion"];
-                                               poll.deviceId=[request objectForKey:@"deviceId"];
-                                               poll.pollToken=[[request objectForKey:@"pollToken"] integerValue];
-                                               poll.response=[request objectForKey:@"response"];
-                                               poll.isReadyToShow=NO;
-                                               poll.choices=[request objectForKey:@"choices"];
-                                               poll.tags=[request objectForKey:@"tags"];
-                                               poll.appUsageTime=[[request objectForKey:@"appUsageTime"] integerValue];
-                                               poll.choiceUrl=[request objectForKey:@"choiceUrl"];
-                                               poll.choiceImageUrl=[request objectForKey:@"choiceImageUrl"];
-                                               poll.imagePollStatus = 0;
-                                               poll.collectButtonText=[request objectForKey:@"collectButtonText"];
-                                               poll.imageCornerRadius=[[request objectForKey:@"imageCornerRadius"] integerValue];
-                                               poll.level=[[request objectForKey:@"level"] integerValue];
-                                               poll.pollRewardImageUrl=[request objectForKey:@"pollRewardImageUrl"];
-                                               poll.prerequisiteType=[request objectForKey:@"prerequisiteType"];
-                                               poll.prerequisiteAnswer=[request objectForKey:@"prerequisiteAnswer"];
-                                               poll.prerequisitePoll=(([request objectForKey:@"prerequisitePoll"] != nil) && (![[request objectForKey:@"prerequisitePoll"] isEqual:[NSNull null]]))?[[request objectForKey:@"prerequisitePoll"] integerValue ]:-1;
-                                               poll.sendDate=[request objectForKey:@"sendDate"];
-                                               poll.session=[[request objectForKey:@"session"] integerValue];
-                                               poll.submitButtonText=[request objectForKey:@"submitButtonText"];
-                                               poll.thankyouButtonText=[request objectForKey:@"thankyouButtonText"];
-                                               poll.virtualCurrency=[request objectForKey:@"virtualCurrency"];
+                                               PJPoll *poll=[[PJPoll alloc] initWithRequest:request];
                                                
                                                // update _app from first record
                                                if (count == 0) {
@@ -480,6 +423,14 @@ static NSOperationQueue *_backgroundQueue;
                                                }
                                                poll.app =_app;
                                                
+                                               // set all child polls recursively
+                                               if ([request objectForKey:@"childPolls"] != [NSNull null]) {
+                                                   poll.childPolls = [Polljoy setChildPolls:[request objectForKey:@"childPolls"] withApp:_app];
+                                               }
+                                               else {
+                                                   poll.childPolls = nil;
+                                               }
+                                               
                                                // create the view
                                                PJPollView *pollView=[[PJPollView alloc] initWithPoll:poll];
                                                pollView.delegate=(id) self;
@@ -502,6 +453,8 @@ static NSOperationQueue *_backgroundQueue;
                                else {
                                    NSLog(@"%@: Error: %@", PJ_SDK_NAME, [connectionError localizedDescription]);
                                }
+                               
+                               util_Log(@"[%@ %@] end getting polls", _PJ_CLASS, _PJ_METHOD);
                            }];
 }
 
@@ -575,6 +528,10 @@ static NSOperationQueue *_backgroundQueue;
     for (PJPoll *poll in _polls) {
         if (!poll.isReadyToShow) {
             pollsAreReady=NO;
+            break;
+        }
+        else {
+            pollsAreReady = [Polljoy checkChildPollStatus:poll.childPolls];
         }
     }
     
@@ -592,6 +549,29 @@ static NSOperationQueue *_backgroundQueue;
     else {
         util_Log(@"[%@ %@] Polls are not ready.", _PJ_CLASS, _PJ_METHOD);
     }
+}
+
++(BOOL) checkChildPollStatus: (NSDictionary *) childPolls {
+    
+    BOOL pollsAreReady=YES;
+    if (childPolls != nil) {
+        for (NSString *key in [childPolls allKeys]) {
+            
+            PJPoll *poll=[childPolls objectForKey:key];
+            
+            if (!poll.isReadyToShow) {
+                pollsAreReady=NO;
+                break;
+            }
+            else {
+                pollsAreReady = [Polljoy checkChildPollStatus:poll.childPolls];
+            }
+        }
+    }
+    
+    util_Log(@"[%@ %@] Child Polls are %@ready. %@", _PJ_CLASS, _PJ_METHOD, (pollsAreReady?@"":@"not "), childPolls);
+    
+    return pollsAreReady;
 }
 
 +(void) downloadAppImage:(NSString*) urlString
@@ -887,8 +867,38 @@ static NSOperationQueue *_backgroundQueue;
         [_polls removeObject:poll];
         [_pollsViews removeObjectForKey:[NSNumber numberWithInteger:poll.pollToken]];
         
+        // check if has child poll for that response
+        if ([poll.childPolls count] > 0) {
+            PJPoll *childPoll = nil;
+            
+            NSDictionary *childPolls = poll.childPolls;
+            if ([childPolls objectForKey:response] != nil) {
+                childPoll = [childPolls objectForKey:response];
+            }
+            else  if ([childPolls objectForKey:@"polljoyPollAnyAnswer"] != nil) {
+                childPoll = [childPolls objectForKey:@"polljoyPollAnyAnswer"];
+            }
+            
+            if (childPoll != nil) {
+                [_polls insertObject:childPoll atIndex:0];
+            }
+        }
+        
         if ([_polls count] > 0) {
+            if ([_delegate respondsToSelector:@selector(PJPollDidResponded:)]) {
+                [_delegate PJPollDidResponded:poll];
+            }
+            
+            if ([_delegate respondsToSelector:@selector(PJPollWillDismiss:)]) {
+                [_delegate PJPollWillDismiss:poll];
+            }
+            
             [view hide];
+            
+            if ([_delegate respondsToSelector:@selector(PJPollDidDismiss:)]) {
+                [_delegate PJPollDidDismiss:poll];
+            }
+
             [[self class] showPoll];
         }
         else {
@@ -941,6 +951,24 @@ static NSOperationQueue *_backgroundQueue;
     [_pollsViews removeObjectForKey:[NSNumber numberWithInteger:poll.pollToken]];
     [_polls removeObject:poll];
     
+    NSString *response=[poll.response copy];
+    // check if has child poll for that response
+    if ([poll.childPolls count] > 0) {
+        PJPoll *childPoll = nil;
+        
+        NSDictionary *childPolls = poll.childPolls;
+        if ([childPolls objectForKey:response] != nil) {
+            childPoll = [childPolls objectForKey:response];
+        }
+        else  if ([childPolls objectForKey:@"polljoyPollAnyAnswer"] != nil) {
+            childPoll = [childPolls objectForKey:@"polljoyPollAnyAnswer"];
+        }
+        
+        if (childPoll != nil) {
+            [_polls insertObject:childPoll atIndex:0];
+        }
+    }
+    
     if ([_polls count] > 0) {
         
         if ([_delegate respondsToSelector:@selector(PJPollDidResponded:)]) {
@@ -973,7 +1001,51 @@ static NSOperationQueue *_backgroundQueue;
         if ([_delegate respondsToSelector:@selector(PJPollDidDismiss:)]) {
             [_delegate PJPollDidDismiss:poll];
         }
+        
+        // clean up and free memory
+        [_pollsViews removeAllObjects];
     }
+}
+
+@end
+
+@implementation Polljoy (internal)
+
++(NSDictionary *) setChildPolls: (NSDictionary *) childPolls withApp: (PJApp *) app;
+{
+    util_Log(@"[%@ %@] childPolls: %@", _PJ_CLASS, _PJ_METHOD, childPolls);
+    
+    NSMutableDictionary *polls = [NSMutableDictionary dictionary];
+    if (childPolls != nil) {
+        for (NSString *key in [childPolls allKeys]) {
+            
+            NSDictionary *pollRequest = [childPolls objectForKey:key];
+            NSDictionary *request=[pollRequest objectForKey:@"PollRequest"];
+            
+            PJPoll *poll=[[PJPoll alloc] initWithRequest:request];
+            
+            util_Log(@"[%@ %@] pollId: %ld childPolls: %@", _PJ_CLASS, _PJ_METHOD, (long)poll.pollId, [request objectForKey:@"childPolls"]);
+            
+            poll.app = app;
+            if ([request objectForKey:@"childPolls"] != [NSNull null]) {
+                poll.childPolls = [Polljoy setChildPolls:[request objectForKey:@"childPolls"] withApp:app];
+            }
+            else {
+                poll.childPolls = nil;
+            }
+            
+            // create the view
+            PJPollView *pollView=[[PJPollView alloc] initWithPoll:poll];
+            pollView.delegate=(id) self;
+            [_pollsViews setObject:pollView forKey:[NSNumber numberWithInteger:poll.pollToken]];
+            
+            [polls setObject:poll forKey:key];
+            
+        }
+
+    }
+    
+    return polls;
 }
 
 @end

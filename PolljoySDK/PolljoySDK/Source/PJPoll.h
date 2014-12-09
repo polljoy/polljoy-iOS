@@ -83,4 +83,9 @@ typedef NSUInteger PJPollImageStatus;
 @property (nonatomic,strong) PJApp *app;
 @property (nonatomic,assign) PJPollImageStatus imagesStatus;
 @property (nonatomic,assign) NSInteger imagePollStatus;
+@property (nonatomic,strong) NSDictionary *childPolls;
+@property (nonatomic,assign) NSInteger searchDepth;
+
+-(PJPoll *) initWithRequest: (NSDictionary *) request;
+
 @end
