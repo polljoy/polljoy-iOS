@@ -58,13 +58,17 @@
  2014/11/07 Antony Man - bug fix
  Version 2.0.1
  
- 2014/11/07 Antony Man - support getting prerequisite polls at the same queue
+ 2014/12/24 Antony Man - support getting prerequisite polls at the same queue
  Version 2.1
+ 
+ 2015/01/07 Antony Man - UI improvement (show temp msg instead of Thankyou or Collect reward screen), support custom sound when reward user
+ Version 2.2
  
  */
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <AudioToolbox/AudioToolbox.h>
 #import "PJPoll.h"
 #import "PJApp.h"
 
@@ -81,13 +85,17 @@ typedef enum {
     PJAlreadyResponded=303,
     PJInvalidPollToken=310,
     PJUserAccountProblem=999
-    
 } PJResponseStatus;
 
 typedef enum {
     PJPayUser,
     PJNonPayUser
 } PJUserType;
+
+typedef enum {
+    PJRewardThankyouMessageStyleMessage,
+    PJRewardThankyouMessageStylePopup
+} PJRewardThankyouMessageStyle;
 
 @protocol PolljoyDelegate <NSObject>
 @optional
@@ -146,6 +154,8 @@ typedef enum {
 +(void) setAutoShow:(BOOL) autoshow;
 +(void) setSandboxMode:(BOOL) sandbox;
 +(void) setTags:(NSString*) tags;
++(void) setMessageShowDuration: (CGFloat) seconds;
++(void) setRewardThankyouMessageStyle: (PJRewardThankyouMessageStyle) style;
 
 +(PJApp *) app;
 +(NSArray *) polls;
@@ -161,5 +171,9 @@ typedef enum {
 +(NSUInteger) timeSinceInstall;
 +(PJUserType) userType;
 +(NSString *) tags;
++(NSString *) SDKVersion;
++(SystemSoundID) soundID;
++(CGFloat) messageShowDuration;
++(PJRewardThankyouMessageStyle) rewardThankyouMessageStyle;
 
 @end

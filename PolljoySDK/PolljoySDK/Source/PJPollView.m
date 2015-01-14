@@ -71,6 +71,8 @@
     IBOutlet UIButton *ipBtn4;
     NSArray *ipButtons;
     NSMutableDictionary *imagePollImages;
+    
+    UIButton *answeredBtn;
 }
 
 @end
@@ -347,24 +349,24 @@
     [mcBtn1 setFrame:CGRectMake(11, 8, 218, 30)];
     [mcBtn1.titleLabel setAdjustsFontSizeToFitWidth:YES];
     [mcBtn1 setContentMode:UIViewContentModeScaleAspectFit];
-    [mcBtn1 addTarget:self action:@selector(userReponded:) forControlEvents:UIControlEventTouchUpInside];
+    [mcBtn1 addTarget:self action:@selector(userResponded:) forControlEvents:UIControlEventTouchUpInside];
     [mcView addSubview:mcBtn1];
     mcBtn2=[UIButton buttonWithType:UIButtonTypeCustom];
     [mcBtn2.titleLabel setAdjustsFontSizeToFitWidth:YES];
     [mcBtn2 setContentMode:UIViewContentModeScaleAspectFit];
-    [mcBtn2 addTarget:self action:@selector(userReponded:) forControlEvents:UIControlEventTouchUpInside];
+    [mcBtn2 addTarget:self action:@selector(userResponded:) forControlEvents:UIControlEventTouchUpInside];
     [mcBtn2 setFrame:CGRectMake(11, 46, 218, 30)];
     [mcView addSubview:mcBtn2];
     mcBtn3=[UIButton buttonWithType:UIButtonTypeCustom];
     [mcBtn3.titleLabel setAdjustsFontSizeToFitWidth:YES];
     [mcBtn3 setContentMode:UIViewContentModeScaleAspectFit];
-    [mcBtn3 addTarget:self action:@selector(userReponded:) forControlEvents:UIControlEventTouchUpInside];
+    [mcBtn3 addTarget:self action:@selector(userResponded:) forControlEvents:UIControlEventTouchUpInside];
     [mcBtn3 setFrame:CGRectMake(11, 84, 218, 30)];
     [mcView addSubview:mcBtn3];
     mcBtn4=[UIButton buttonWithType:UIButtonTypeCustom];
     [mcBtn4.titleLabel setAdjustsFontSizeToFitWidth:YES];
     [mcBtn4 setContentMode:UIViewContentModeScaleAspectFit];
-    [mcBtn4 addTarget:self action:@selector(userReponded:) forControlEvents:UIControlEventTouchUpInside];
+    [mcBtn4 addTarget:self action:@selector(userResponded:) forControlEvents:UIControlEventTouchUpInside];
     [mcBtn4 setFrame:CGRectMake(11, 122, 218, 30)];
     [mcView addSubview:mcBtn4];
     
@@ -380,7 +382,7 @@
     [textView addSubview:responseTextView];
     
     textBtn=[UIButton buttonWithType:UIButtonTypeCustom];
-    [textBtn addTarget:self action:@selector(userReponded:) forControlEvents:UIControlEventTouchUpInside];
+    [textBtn addTarget:self action:@selector(userResponded:) forControlEvents:UIControlEventTouchUpInside];
     [textBtn setFrame:CGRectMake(11, 122, 218, 30)];
     [textBtn setContentMode:UIViewContentModeScaleAspectFit];
     [textBtn setTitle:NSLocalizedString(@"Submit", @"Submit") forState:UIControlStateNormal];
@@ -952,7 +954,7 @@
         ipBtnPreview.frame = CGRectMake(0.2 * ipView.frame.size.width, 0, 0.6 * ipView.frame.size.width, 0.6 * ipView.frame.size.width);
         [ipBtnPreview setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
         
-        [ipBtnConfirm setFrame:CGRectMake(0, 0, 0.5 * ipBtnPreview.frame.size.width, 0.25 * ipBtnPreview.frame.size.height)];
+        [ipBtnConfirm setFrame:CGRectMake(0, 0, 0.75 * ipBtnPreview.frame.size.width, 0.25 * ipBtnPreview.frame.size.height)];
         ipBtnConfirm.center = ipBtnPreview.center;
         [self setButtonStyle:ipBtnConfirm];
         
@@ -1232,7 +1234,7 @@
         ipBtnPreview.frame = CGRectMake(spacer4, spacer4Y, 0.55 * innerSize.height * baseRefDeltaHeightAdjustment, 0.55 * innerSize.height * baseRefDeltaHeightAdjustment);
         [ipBtnPreview setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
         
-        [ipBtnConfirm setFrame:CGRectMake(0, 0, 0.5 * ipBtnPreview.frame.size.width, 0.25 * ipBtnPreview.frame.size.height)];
+        [ipBtnConfirm setFrame:CGRectMake(0, 0, 0.75 * ipBtnPreview.frame.size.width, 0.25 * ipBtnPreview.frame.size.height)];
         ipBtnConfirm.center = ipBtnPreview.center;
         [self setButtonStyle:ipBtnConfirm];
         
@@ -1310,25 +1312,43 @@
 
 -(void) showActionAfterResponse
 {
-    questionLabel.text=myPoll.customMessage;
-    
     if (myPoll.virtualAmount>0) {
-        [collectBtn setTitle:myPoll.collectButtonText forState:UIControlStateNormal];
-        [collectRewardImageView setImage:rewardImageView.image];
-        collectView.hidden=NO;
-        collectBtn.hidden=NO;
+        
+        if ([Polljoy rewardThankyouMessageStyle] == PJRewardThankyouMessageStylePopup) {
+            questionLabel.text=myPoll.customMessage;
+            [collectBtn setTitle:myPoll.collectButtonText forState:UIControlStateNormal];
+            [collectRewardImageView setImage:rewardImageView.image];
+            collectView.hidden=NO;
+            collectBtn.hidden=NO;
+        }
+        else {
+            [self showCollectMsg];
+        }
+        
         closeBtn.hidden=YES;
         rewardImageView.hidden=YES;
         virtualAmount.hidden=YES;
         virtualAmountRewardLabel.hidden=YES;
     }
     else {
-        [collectBtn setTitle:myPoll.thankyouButtonText forState:UIControlStateNormal];
-        collectView.hidden=NO;
-        collectBtn.hidden=NO;
+        
+        if ([Polljoy rewardThankyouMessageStyle] == PJRewardThankyouMessageStylePopup) {
+            questionLabel.text=myPoll.customMessage;
+            [collectBtn setTitle:myPoll.thankyouButtonText forState:UIControlStateNormal];
+            collectView.hidden=NO;
+            collectBtn.hidden=NO;
+        }
+        else {
+            [self showThankyouMsg];
+        }
+        
         collectRewardImageView.hidden=YES;
         collectTextLabel.hidden=YES;
         closeBtn.hidden=YES;
+        
+        rewardImageView.hidden=YES;
+        virtualAmount.hidden=YES;
+        virtualAmountRewardLabel.hidden=YES;
     }
 }
 
@@ -1345,8 +1365,105 @@
     [self endEditing:YES];
 }
 
+-(void) showCollectMsg
+{
+    CGRect rect;
+    UIView *view;
+    
+
+    if ([myPoll.type isEqualToString:@"I"]) {
+        rect = answeredBtn.frame;
+        CGFloat width = rect.size.height/4;
+        view = [[UIView alloc] initWithFrame:rect];
+        UIImageView *iv = [[UIImageView alloc] initWithImage:rewardImageView.image];
+        [iv.layer setBorderWidth:0];
+        [iv.layer setBorderColor:[[UIColor clearColor] CGColor]];
+        [iv setFrame:CGRectMake(0, width/2, width, width)];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(width + 5, 0, rect.size.width - width - 5, width*2)];
+        label.textAlignment = NSTextAlignmentLeft;
+        label.font = answeredBtn.titleLabel.font;
+        label.textColor = virtualAmount.textColor;
+        label.numberOfLines = 0;
+        label.minimumScaleFactor = 0.5;
+        label.lineBreakMode = NSLineBreakByWordWrapping;
+        label.text = [NSString stringWithFormat:@"%ld %@", (long)myPoll.virtualAmount, myPoll.collectMsgText];
+        //[label sizeToFit];
+        //[label setFrame:CGRectMake(label.frame.origin.x, label.frame.origin.y, label.frame.size.width, view.frame.size.height)];;
+        [view addSubview:label];
+        [view addSubview:iv];
+        [view setFrame:CGRectMake(view.frame.origin.x, view.frame.origin.y, label.frame.origin.x + label.frame.size.width , width * 2 )];
+        view.center = answeredBtn.center;
+        
+        answeredBtn.hidden = YES;
+        ipBtnConfirm.hidden = YES;
+    }
+    else {
+        rect = answeredBtn.frame;
+        view = [[UIView alloc] initWithFrame:rect];
+        UIImageView *iv = [[UIImageView alloc] initWithImage:rewardImageView.image];
+        [iv.layer setBorderWidth:5];
+        [iv.layer setBorderColor:[[UIColor clearColor] CGColor]];
+        [iv setFrame:CGRectMake(0, 0, rect.size.height, rect.size.height)];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(rect.size.height + 5, 0, rect.size.width - rect.size.height - 5, rect.size.height)];
+        label.textAlignment = NSTextAlignmentLeft;
+        label.font = answeredBtn.titleLabel.font;
+        label.textColor = virtualAmount.textColor;
+        label.numberOfLines = 0;
+        label.minimumScaleFactor = 0.5;
+        label.lineBreakMode = NSLineBreakByWordWrapping;
+        label.text = [NSString stringWithFormat:@"%ld %@", (long)myPoll.virtualAmount, myPoll.collectMsgText];
+        [label sizeToFit];
+        [label setFrame:CGRectMake(label.frame.origin.x, label.frame.origin.y, label.frame.size.width, view.frame.size.height)];;
+        [view addSubview:label];
+        [view addSubview:iv];
+        [view setFrame:CGRectMake(view.frame.origin.x, view.frame.origin.y, label.frame.origin.x + label.frame.size.width , view.frame.size.height)];
+        view.center = answeredBtn.center;
+    }
+    
+    [answeredBtn.superview addSubview:view];
+    answeredBtn.hidden = YES;
+    self.userInteractionEnabled = NO;
+    [self playCollectSound];
+    
+    [self performSelector:@selector(userConfirmed:) withObject:collectBtn afterDelay:[Polljoy messageShowDuration]];
+    
+}
+
+-(void) showThankyouMsg
+{
+    CGRect rect = answeredBtn.frame;
+    UIView *view = [[UIView alloc] initWithFrame:rect];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, rect.size.width, rect.size.height)];
+    label.textAlignment = NSTextAlignmentCenter;
+    label.font = answeredBtn.titleLabel.font;
+    label.textColor = virtualAmount.textColor;
+    label.numberOfLines = 0;
+    label.minimumScaleFactor = 0.5;
+    label.lineBreakMode = NSLineBreakByWordWrapping;
+    label.text = [NSString stringWithFormat:@"%@", myPoll.thankyouMsgText];
+    [view addSubview:label];
+    
+    if ([myPoll.type isEqualToString:@"I"]) {
+        answeredBtn.hidden = YES;
+        ipBtnConfirm.hidden = YES;
+    }
+
+    [answeredBtn.superview addSubview:view];
+    answeredBtn.hidden = YES;
+    self.userInteractionEnabled = NO;
+    
+    [self performSelector:@selector(userConfirmed:) withObject:collectBtn afterDelay:[Polljoy messageShowDuration]];
+}
+
+-(void) playCollectSound
+{
+    if ((myPoll.app.customSoundUrl!=nil) && (![myPoll.app.customSoundUrl isEqual:[NSNull null]]) && ([myPoll.app.customSoundUrl length] > 0)) {
+        AudioServicesPlaySystemSound ([Polljoy soundID]);
+    }
+}
+
 #pragma mark - response handling
--(IBAction)userReponded:(id)sender {
+-(IBAction)userResponded:(id)sender {
 
     [self endEditing:YES];
     
@@ -1371,10 +1488,18 @@
     
     userIsResponded=YES;
     
-    closeBtn.hidden=NO;
-    mcView.hidden=YES;
-    textView.hidden=YES;
-    ipView.hidden=YES;
+    if ([Polljoy rewardThankyouMessageStyle] == PJRewardThankyouMessageStylePopup) {
+        closeBtn.hidden=NO;
+        mcView.hidden=YES;
+        textView.hidden=YES;
+        ipView.hidden=YES;
+    }
+    else {
+        closeBtn.hidden=NO;
+        self.userInteractionEnabled= NO;
+    }
+
+    answeredBtn = button;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.delegate PJPollViewDidAnswered:self poll:myPoll];
     });
@@ -1422,7 +1547,7 @@
     
     if (button==ipBtnConfirm) {
         // user confirmed, process response submission
-        [self userReponded:ipBtnPreview];
+        [self userResponded:ipBtnPreview];
     }
     else {
         ipBtnConfirm.hidden=NO;

@@ -70,6 +70,9 @@
     poll.thankyouButtonText=[request objectForKey:@"thankyouButtonText"];
     poll.virtualCurrency=[request objectForKey:@"virtualCurrency"];
     poll.searchDepth=[[request objectForKey:@"searchDepth"] integerValue];
+    poll.virtualRewardAnswer=[request objectForKey:@"virtualRewardAnswer"];
+    poll.collectMsgText=[request objectForKey:@"collectMsgText"];
+    poll.thankyouMsgText=[request objectForKey:@"thankyouMsgText"];
     
     return poll;
 }

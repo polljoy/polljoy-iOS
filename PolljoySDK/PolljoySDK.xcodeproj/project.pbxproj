@@ -36,6 +36,9 @@
 		0A1CF68E18F5699300658A68 /* PolljoyCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1CF68C18F5699300658A68 /* PolljoyCore.m */; };
 		0A1CF6E918F5734500658A68 /* PJPoll.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A1CF6E718F5734500658A68 /* PJPoll.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0A1CF6EA18F5734500658A68 /* PJPoll.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1CF6E818F5734500658A68 /* PJPoll.m */; };
+		0A1E16651A5D028500FB6F77 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A1E16641A5D028500FB6F77 /* AudioToolbox.framework */; };
+		0A1E166A1A5D393300FB6F77 /* PJFileDownloader.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A1E16681A5D393300FB6F77 /* PJFileDownloader.h */; };
+		0A1E166B1A5D393300FB6F77 /* PJFileDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1E16691A5D393300FB6F77 /* PJFileDownloader.m */; };
 		0ACABF3118F6A63A0018D6DD /* PJDebugUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ACABF3018F6A63A0018D6DD /* PJDebugUtil.h */; };
 		0AD7A14018F81F3100C9C742 /* PJPollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AD7A13E18F81F3100C9C742 /* PJPollView.h */; };
 		0AD7A14118F81F3100C9C742 /* PJPollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AD7A13F18F81F3100C9C742 /* PJPollView.m */; };
@@ -95,6 +98,10 @@
 		0A1CF68C18F5699300658A68 /* PolljoyCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PolljoyCore.m; sourceTree = "<group>"; };
 		0A1CF6E718F5734500658A68 /* PJPoll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PJPoll.h; sourceTree = "<group>"; };
 		0A1CF6E818F5734500658A68 /* PJPoll.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PJPoll.m; sourceTree = "<group>"; };
+		0A1E16641A5D028500FB6F77 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		0A1E16661A5D31BB00FB6F77 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		0A1E16681A5D393300FB6F77 /* PJFileDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PJFileDownloader.h; sourceTree = "<group>"; };
+		0A1E16691A5D393300FB6F77 /* PJFileDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PJFileDownloader.m; sourceTree = "<group>"; };
 		0ACABF3018F6A63A0018D6DD /* PJDebugUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PJDebugUtil.h; sourceTree = "<group>"; };
 		0AD7A13E18F81F3100C9C742 /* PJPollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PJPollView.h; sourceTree = "<group>"; };
 		0AD7A13F18F81F3100C9C742 /* PJPollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PJPollView.m; sourceTree = "<group>"; };
@@ -108,6 +115,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A1E16651A5D028500FB6F77 /* AudioToolbox.framework in Frameworks */,
 				0A1CF62B18F55AF300658A68 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -146,6 +154,8 @@
 		0A1CF62918F55AF300658A68 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0A1E16661A5D31BB00FB6F77 /* AVFoundation.framework */,
+				0A1E16641A5D028500FB6F77 /* AudioToolbox.framework */,
 				0A1CF62A18F55AF300658A68 /* Foundation.framework */,
 				0A1CF67B18F5663D00658A68 /* CoreFoundation.framework */,
 			);
@@ -240,6 +250,8 @@
 				0AD7A13F18F81F3100C9C742 /* PJPollView.m */,
 				0AF90DCF18FAF53F00B2CAAC /* PJImageDownloader.h */,
 				0AF90DD018FAF53F00B2CAAC /* PJImageDownloader.m */,
+				0A1E16681A5D393300FB6F77 /* PJFileDownloader.h */,
+				0A1E16691A5D393300FB6F77 /* PJFileDownloader.m */,
 			);
 			name = Private;
 			sourceTree = "<group>";
@@ -252,6 +264,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A1CF65818F55D2F00658A68 /* Polljoy.h in Headers */,
+				0A1E166A1A5D393300FB6F77 /* PJFileDownloader.h in Headers */,
 				0A0B38FE18F644EC00619B68 /* PJApp.h in Headers */,
 				0A1CF6E918F5734500658A68 /* PJPoll.h in Headers */,
 				0ACABF3118F6A63A0018D6DD /* PJDebugUtil.h in Headers */,
@@ -384,6 +397,7 @@
 				0AD7A14118F81F3100C9C742 /* PJPollView.m in Sources */,
 				0A1CF6EA18F5734500658A68 /* PJPoll.m in Sources */,
 				0A0B38FF18F644EC00619B68 /* PJApp.m in Sources */,
+				0A1E166B1A5D393300FB6F77 /* PJFileDownloader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

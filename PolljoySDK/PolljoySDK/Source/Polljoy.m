@@ -9,10 +9,12 @@
 #import "PolljoyCore.h"
 #import "PJPollView.h"
 #import "PJImageDownloader.h"
+#import "PJFileDownloader.h"
 
 #define PJ_SDK_NAME @"Polljoy"
-#define PJ_API_SANDBOX_endpoint @"https://apisandbox.polljoy.com/2.1/poll/"
-#define PJ_API_PRODUCTION_endpoint @"https://api.polljoy.com/2.1/poll/"
+#define PJ_API_SANDBOX_endpoint @"https://apisandbox.polljoy.com/2.2/poll/"
+//#define PJ_API_SANDBOX_endpoint @"http://api/2.2/poll/"
+#define PJ_API_PRODUCTION_endpoint @"https://api.polljoy.com/2.2/poll/"
 
 @interface Polljoy (internal) {
     
@@ -20,6 +22,7 @@
 +(NSDictionary *) setChildPolls: (NSDictionary *) childPolls withApp: (PJApp *) app;
 @end
 
+static NSString *_SDKVersion = @"2.2.1";
 static NSString *PJ_API_endpoint=PJ_API_PRODUCTION_endpoint;
 static BOOL _isRegisteringSession=NO;
 static BOOL _needsAutoShow=NO;
@@ -43,6 +46,9 @@ static NSUInteger _session;
 static NSUInteger _timeSinceInstall;
 static PJUserType _userType;
 static NSString *_tags;
+static SystemSoundID _soundID;
+static CGFloat _messageShowDuration=2.0;
+static PJRewardThankyouMessageStyle _rewardThankyouMessageStyle=PJRewardThankyouMessageStyleMessage;
 static NSMutableArray *_polls;  // this must be in order
 static NSMutableDictionary *_pollsViews;
 
@@ -165,10 +171,14 @@ static NSOperationQueue *_backgroundQueue;
                                            app.rewardImageUrl=[appDict objectForKey:@"rewardImageUrl"];
                                            app.userId=[appDict objectForKey:@"userId"];
                                            app.imageCornerRadius = [[appDict objectForKey:@"imageCornerRadius"] integerValue];
-                                                                    
+                                           //app.customSoundUrl=[[[appDict objectForKey:@"customSoundUrl"] componentsSeparatedByString:@"?"] objectAtIndex:0];
+                                           app.customSoundUrl=[appDict objectForKey:@"customSoundUrl"];
+                                           
                                            _app = app;
                                            
                                            _userId = [appDict objectForKey:@"userId"];
+                                           
+                                           [[self class] downloadCustomSound:_app.customSoundUrl];
                                            
                                            [[self class] downloadAppImage:_app.defaultImageUrl];
                                            
@@ -420,6 +430,8 @@ static NSOperationQueue *_backgroundQueue;
                                                    _app.rewardImageUrl=[appDict objectForKey:@"rewardImageUrl"];
                                                    _app.userId=[appDict objectForKey:@"userId"];
                                                    _app.imageCornerRadius=[[appDict objectForKey:@"imageCornerRadius"] integerValue];
+                                                   //_app.customSoundUrl=[[[appDict objectForKey:@"customSoundUrl"] componentsSeparatedByString:@"?"] objectAtIndex:0];
+                                                   _app.customSoundUrl=[appDict objectForKey:@"customSoundUrl"];
                                                }
                                                poll.app =_app;
                                                
@@ -503,12 +515,14 @@ static NSOperationQueue *_backgroundQueue;
                                    NSNumber *status=[responseObject objectForKey:@"status"];
                                    NSString *message=[responseObject objectForKey:@"message"];
                                    NSString *virtualAmount=[responseObject objectForKey:@"virtualAmount"];
+                                   NSString *virtualCurrency=[responseObject objectForKey:@"virtualCurrency"];
                                    NSString *response=[responseObject objectForKey:@"response"];
                                    
                                    if ([status integerValue]==0) {
                                        util_Log(@"[%@ %@] status: %@ message: %@", _PJ_CLASS, _PJ_METHOD, status, message);
                                        util_Log(@"[%@ %@] response: %@", _PJ_CLASS, _PJ_METHOD, response);
                                        util_Log(@"[%@ %@] virtualAmount: %@", _PJ_CLASS, _PJ_METHOD, virtualAmount);
+                                       util_Log(@"[%@ %@] virtualCurrency: %@", _PJ_CLASS, _PJ_METHOD, virtualCurrency);
                                    }
                                    else {
                                        NSLog(@"%@: Error - Status: %@ (%@)", PJ_SDK_NAME, status,message);
@@ -695,6 +709,26 @@ static NSOperationQueue *_backgroundQueue;
     }
 }
 
++(void) downloadCustomSound:(NSString*) urlString
+{
+    if ((urlString!=nil) && (![urlString isEqual:[NSNull null]]) && ([urlString length] > 0)) {
+        // assume file will download completed before playing as file is small
+        util_Log(@"[%@ %@] customSoundUrl started: %@", _PJ_CLASS, _PJ_METHOD, urlString);
+        PJFileDownloader *fileDownloader = [[PJFileDownloader alloc] init];
+        [fileDownloader setUrlString:urlString];
+        [fileDownloader setLocalTempFilename:@"customerSound.wav"];
+        [fileDownloader setCompletionHandler:^(NSURL *fileURL) {
+            // create system soundID
+            OSStatus status =  AudioServicesCreateSystemSoundID((__bridge CFURLRef)fileURL, &_soundID);
+            util_Log(@"[%@ %@] customSound completed: %@ %u %d", _PJ_CLASS, _PJ_METHOD, [fileURL absoluteString], (unsigned int)_soundID, (int)status);
+
+        }];
+        
+        [fileDownloader startDownload];
+
+    }
+}
+
 +(void) showPoll
 {
     util_Log(@"[%@ %@]",_PJ_CLASS, _PJ_METHOD);
@@ -773,12 +807,22 @@ static NSOperationQueue *_backgroundQueue;
 
 +(void) setAutoShow:(BOOL) autoshow
 {
-    _autoshow=autoshow;
+    _autoshow = autoshow;
 }
 
 +(void) setSandboxMode:(BOOL) sandbox
 {
     PJ_API_endpoint=sandbox?PJ_API_SANDBOX_endpoint:PJ_API_PRODUCTION_endpoint;
+}
+
++(void) setMessageShowDuration: (CGFloat) seconds
+{
+    _messageShowDuration = seconds;
+}
+
++(void) setRewardThankyouMessageStyle: (PJRewardThankyouMessageStyle) style
+{
+    _rewardThankyouMessageStyle = style;
 }
 
 #pragma mark - getter methods
@@ -843,6 +887,26 @@ static NSOperationQueue *_backgroundQueue;
     return _tags;
 }
 
++(NSString *) SDKVersion
+{
+    return _SDKVersion;
+}
+
++(SystemSoundID) soundID
+{
+    return _soundID;
+}
+
++(CGFloat) messageShowDuration
+{
+    return _messageShowDuration;
+}
+
++(PJRewardThankyouMessageStyle) rewardThankyouMessageStyle
+{
+    return _rewardThankyouMessageStyle;
+}
+
 +(NSArray *) polls
 {
     return _polls;
@@ -859,6 +923,11 @@ static NSOperationQueue *_backgroundQueue;
     NSString *response=[poll.response copy];
     NSUInteger pollToken=poll.pollToken;
     [Polljoy responsePoll:pollToken response:response];
+    
+    // check if virtual reward answer assigned
+    if ((poll.virtualRewardAnswer!=nil) && (![poll.virtualRewardAnswer isEqual:[NSNull null]]) && ([poll.virtualRewardAnswer length] > 0)) {
+       if (![poll.virtualRewardAnswer isEqual:response]) poll.virtualAmount = 0 ;  // no reward if response not equal to reward answer
+    }
     
     if (poll.virtualAmount>0) {
         [view showActionAfterResponse];
@@ -906,14 +975,16 @@ static NSOperationQueue *_backgroundQueue;
         }
     }
     
-    // check if response has associated external link
-    if ([poll.type isEqualToString:@"M"] || [poll.type isEqualToString:@"I"]) {
-        if (poll.choiceUrl != nil){
-            NSDictionary *choiceUrl=[poll.choiceUrl objectForKey:response];
-            NSString *iosURL = [choiceUrl objectForKey:@"ios"];
-            if ([iosURL length] > 0) {
-                if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:iosURL]]) {
-                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:iosURL]];
+    if ([Polljoy rewardThankyouMessageStyle] == PJRewardThankyouMessageStylePopup) {
+        // check if response has associated external link
+        if ([poll.type isEqualToString:@"M"] || [poll.type isEqualToString:@"I"]) {
+            if (poll.choiceUrl != nil){
+                NSDictionary *choiceUrl=[poll.choiceUrl objectForKey:response];
+                NSString *iosURL = [choiceUrl objectForKey:@"ios"];
+                if ([iosURL length] > 0) {
+                    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:iosURL]]) {
+                        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:iosURL]];
+                    }
                 }
             }
         }
@@ -1004,6 +1075,21 @@ static NSOperationQueue *_backgroundQueue;
         
         // clean up and free memory
         [_pollsViews removeAllObjects];
+    }
+    
+    if ([Polljoy rewardThankyouMessageStyle] == PJRewardThankyouMessageStyleMessage) {
+        // check if response has associated external link
+        if ([poll.type isEqualToString:@"M"] || [poll.type isEqualToString:@"I"]) {
+            if (poll.choiceUrl != nil){
+                NSDictionary *choiceUrl=[poll.choiceUrl objectForKey:response];
+                NSString *iosURL = [choiceUrl objectForKey:@"ios"];
+                if ([iosURL length] > 0) {
+                    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:iosURL]]) {
+                        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:iosURL]];
+                    }
+                }
+            }
+        }
     }
 }
 
