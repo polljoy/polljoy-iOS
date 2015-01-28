@@ -13,7 +13,6 @@
 
 #define PJ_SDK_NAME @"Polljoy"
 #define PJ_API_SANDBOX_endpoint @"https://apisandbox.polljoy.com/2.2/poll/"
-//#define PJ_API_SANDBOX_endpoint @"http://api/2.2/poll/"
 #define PJ_API_PRODUCTION_endpoint @"https://api.polljoy.com/2.2/poll/"
 
 @interface Polljoy (internal) {
@@ -22,7 +21,7 @@
 +(NSDictionary *) setChildPolls: (NSDictionary *) childPolls withApp: (PJApp *) app;
 @end
 
-static NSString *_SDKVersion = @"2.2.1";
+static NSString *_SDKVersion = @"2.2.2";
 static NSString *PJ_API_endpoint=PJ_API_PRODUCTION_endpoint;
 static BOOL _isRegisteringSession=NO;
 static BOOL _needsAutoShow=NO;
@@ -47,7 +46,8 @@ static NSUInteger _timeSinceInstall;
 static PJUserType _userType;
 static NSString *_tags;
 static SystemSoundID _soundID;
-static CGFloat _messageShowDuration=2.0;
+static SystemSoundID _tapSoundID;
+static CGFloat _messageShowDuration=1.5;
 static PJRewardThankyouMessageStyle _rewardThankyouMessageStyle=PJRewardThankyouMessageStyleMessage;
 static NSMutableArray *_polls;  // this must be in order
 static NSMutableDictionary *_pollsViews;
@@ -171,14 +171,15 @@ static NSOperationQueue *_backgroundQueue;
                                            app.rewardImageUrl=[appDict objectForKey:@"rewardImageUrl"];
                                            app.userId=[appDict objectForKey:@"userId"];
                                            app.imageCornerRadius = [[appDict objectForKey:@"imageCornerRadius"] integerValue];
-                                           //app.customSoundUrl=[[[appDict objectForKey:@"customSoundUrl"] componentsSeparatedByString:@"?"] objectAtIndex:0];
                                            app.customSoundUrl=[appDict objectForKey:@"customSoundUrl"];
+                                           app.customTapSoundUrl=[appDict objectForKey:@"customTapSoundUrl"];
                                            
                                            _app = app;
                                            
                                            _userId = [appDict objectForKey:@"userId"];
                                            
                                            [[self class] downloadCustomSound:_app.customSoundUrl];
+                                           [[self class] downloadCustomTapSound:_app.customTapSoundUrl];
                                            
                                            [[self class] downloadAppImage:_app.defaultImageUrl];
                                            
@@ -430,8 +431,8 @@ static NSOperationQueue *_backgroundQueue;
                                                    _app.rewardImageUrl=[appDict objectForKey:@"rewardImageUrl"];
                                                    _app.userId=[appDict objectForKey:@"userId"];
                                                    _app.imageCornerRadius=[[appDict objectForKey:@"imageCornerRadius"] integerValue];
-                                                   //_app.customSoundUrl=[[[appDict objectForKey:@"customSoundUrl"] componentsSeparatedByString:@"?"] objectAtIndex:0];
                                                    _app.customSoundUrl=[appDict objectForKey:@"customSoundUrl"];
+                                                   _app.customTapSoundUrl=[appDict objectForKey:@"customTapSoundUrl"];
                                                }
                                                poll.app =_app;
                                                
@@ -729,6 +730,26 @@ static NSOperationQueue *_backgroundQueue;
     }
 }
 
++(void) downloadCustomTapSound:(NSString*) urlString
+{
+    if ((urlString!=nil) && (![urlString isEqual:[NSNull null]]) && ([urlString length] > 0)) {
+        // assume file will download completed before playing as file is small
+        util_Log(@"[%@ %@] customTapSoundUrl started: %@", _PJ_CLASS, _PJ_METHOD, urlString);
+        PJFileDownloader *fileDownloader = [[PJFileDownloader alloc] init];
+        [fileDownloader setUrlString:urlString];
+        [fileDownloader setLocalTempFilename:@"customerTapSound.wav"];
+        [fileDownloader setCompletionHandler:^(NSURL *fileURL) {
+            // create system soundID
+            OSStatus status =  AudioServicesCreateSystemSoundID((__bridge CFURLRef)fileURL, &_tapSoundID);
+            util_Log(@"[%@ %@] customTapSound completed: %@ %u %d", _PJ_CLASS, _PJ_METHOD, [fileURL absoluteString], (unsigned int)_tapSoundID, (int)status);
+            
+        }];
+        
+        [fileDownloader startDownload];
+        
+    }
+}
+
 +(void) showPoll
 {
     util_Log(@"[%@ %@]",_PJ_CLASS, _PJ_METHOD);
@@ -897,6 +918,11 @@ static NSOperationQueue *_backgroundQueue;
     return _soundID;
 }
 
++(SystemSoundID) tapSoundID
+{
+    return _tapSoundID;
+}
+
 +(CGFloat) messageShowDuration
 {
     return _messageShowDuration;
@@ -962,12 +988,13 @@ static NSOperationQueue *_backgroundQueue;
                 [_delegate PJPollWillDismiss:poll];
             }
             
+            [view playTapSound];
             [view hide];
             
             if ([_delegate respondsToSelector:@selector(PJPollDidDismiss:)]) {
                 [_delegate PJPollDidDismiss:poll];
             }
-
+            
             [[self class] showPoll];
         }
         else {
@@ -975,7 +1002,9 @@ static NSOperationQueue *_backgroundQueue;
         }
     }
     
-    if ([Polljoy rewardThankyouMessageStyle] == PJRewardThankyouMessageStylePopup) {
+    if (([Polljoy rewardThankyouMessageStyle] == PJRewardThankyouMessageStylePopup) ||
+        (([Polljoy rewardThankyouMessageStyle] == PJRewardThankyouMessageStyleMessage) &&  ([_polls count] > 0)))
+    {
         // check if response has associated external link
         if ([poll.type isEqualToString:@"M"] || [poll.type isEqualToString:@"I"]) {
             if (poll.choiceUrl != nil){

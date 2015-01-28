@@ -173,6 +173,7 @@ typedef enum {
 +(NSString *) tags;
 +(NSString *) SDKVersion;
 +(SystemSoundID) soundID;
++(SystemSoundID) tapSoundID;
 +(CGFloat) messageShowDuration;
 +(PJRewardThankyouMessageStyle) rewardThankyouMessageStyle;
 

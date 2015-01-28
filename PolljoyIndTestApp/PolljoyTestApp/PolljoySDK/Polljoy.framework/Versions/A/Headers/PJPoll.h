@@ -85,6 +85,9 @@ typedef NSUInteger PJPollImageStatus;
 @property (nonatomic,assign) NSInteger imagePollStatus;
 @property (nonatomic,strong) NSDictionary *childPolls;
 @property (nonatomic,assign) NSInteger searchDepth;
+@property (nonatomic,strong) NSString *virtualRewardAnswer;
+@property (nonatomic,strong) NSString *collectMsgText;
+@property (nonatomic,strong) NSString *thankyouMsgText;
 
 -(PJPoll *) initWithRequest: (NSDictionary *) request;
 

@@ -953,7 +953,7 @@
         
         ipBtnPreview.frame = CGRectMake(0.2 * ipView.frame.size.width, 0, 0.6 * ipView.frame.size.width, 0.6 * ipView.frame.size.width);
         [ipBtnPreview setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
-        
+        [ipBtnPreview setBackgroundColor:[UIColor clearColor]];
         [ipBtnConfirm setFrame:CGRectMake(0, 0, 0.75 * ipBtnPreview.frame.size.width, 0.25 * ipBtnPreview.frame.size.height)];
         ipBtnConfirm.center = ipBtnPreview.center;
         [self setButtonStyle:ipBtnConfirm];
@@ -1451,6 +1451,7 @@
     [answeredBtn.superview addSubview:view];
     answeredBtn.hidden = YES;
     self.userInteractionEnabled = NO;
+    [self playTapSound];
     
     [self performSelector:@selector(userConfirmed:) withObject:collectBtn afterDelay:[Polljoy messageShowDuration]];
 }
@@ -1459,6 +1460,13 @@
 {
     if ((myPoll.app.customSoundUrl!=nil) && (![myPoll.app.customSoundUrl isEqual:[NSNull null]]) && ([myPoll.app.customSoundUrl length] > 0)) {
         AudioServicesPlaySystemSound ([Polljoy soundID]);
+    }
+}
+
+-(void) playTapSound
+{
+    if ((myPoll.app.customTapSoundUrl!=nil) && (![myPoll.app.customTapSoundUrl isEqual:[NSNull null]]) && ([myPoll.app.customTapSoundUrl length] > 0)) {
+        AudioServicesPlaySystemSound ([Polljoy tapSoundID]);
     }
 }
 
@@ -1474,6 +1482,7 @@
         // ignore all blank reply
         if ([myPoll.response length]==0) {
             [responseTextView becomeFirstResponder];
+            [self playTapSound];
             return;
         }
         else {
@@ -1508,6 +1517,7 @@
 -(IBAction)userSkipped:(id)sender {
     
     [self endEditing:YES];
+    [self playTapSound];
     
     if (userIsResponded) {
         [self userConfirmed:sender];
@@ -1540,6 +1550,8 @@
     else {
         ipBtnConfirm.hidden=NO;
     }
+    
+    [self playTapSound];
 }
 
 -(IBAction)userConfirmImagePoll:(id)sender {
@@ -1551,6 +1563,7 @@
     }
     else {
         ipBtnConfirm.hidden=NO;
+        [self playTapSound];
     }
 }
 

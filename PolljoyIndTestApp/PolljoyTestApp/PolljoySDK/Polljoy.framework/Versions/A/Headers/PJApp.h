@@ -47,4 +47,6 @@
 @property (nonatomic,strong) NSString *rewardImageUrl;
 @property (nonatomic,strong) NSString *userId;
 @property (nonatomic,assign) NSInteger imageCornerRadius;
+@property (nonatomic,strong) NSString *customSoundUrl;
+@property (nonatomic,strong) NSString *customTapSoundUrl;
 @end

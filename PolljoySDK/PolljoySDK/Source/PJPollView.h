@@ -25,8 +25,9 @@
 @property (nonatomic, strong) NSObject<PJPollViewDelegate> *delegate;
 
 -(id) initWithPoll: (PJPoll*) poll;
-//-(void) setPoll:(PJPoll*) poll;
 -(void) show;
 -(void) hide;
 -(void) showActionAfterResponse;
+-(void) playCollectSound;
+-(void) playTapSound;
 @end
