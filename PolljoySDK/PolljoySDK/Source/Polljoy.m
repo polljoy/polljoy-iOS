@@ -21,7 +21,7 @@
 +(NSDictionary *) setChildPolls: (NSDictionary *) childPolls withApp: (PJApp *) app;
 @end
 
-static NSString *_SDKVersion = @"2.2.2";
+static NSString *_SDKVersion = @"2.2.2.1";
 static NSString *PJ_API_endpoint=PJ_API_PRODUCTION_endpoint;
 static BOOL _isRegisteringSession=NO;
 static BOOL _needsAutoShow=NO;

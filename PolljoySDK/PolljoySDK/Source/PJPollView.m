@@ -629,6 +629,7 @@
             borderImageP = [myPoll.app.borderImageUrl_16x9_P length] > 0 ? myPoll.app.borderImageUrl_16x9_P : nil;
             buttonImageL = [myPoll.app.buttonImageUrl_16x9_L length] > 0 ? myPoll.app.buttonImageUrl_16x9_L : nil;
             buttonImageP = [myPoll.app.buttonImageUrl_16x9_P length] > 0 ? myPoll.app.buttonImageUrl_16x9_P : nil;
+            util_Log(@"[%@ %@] 16x9", _PJ_CLASS, _PJ_METHOD);
         }
         else {
             // 3:2
@@ -636,6 +637,7 @@
             borderImageP = [myPoll.app.borderImageUrl_3x2_P length] > 0 ? myPoll.app.borderImageUrl_3x2_P : nil;
             buttonImageL = [myPoll.app.buttonImageUrl_3x2_L length] > 0 ? myPoll.app.buttonImageUrl_3x2_L : nil;
             buttonImageP = [myPoll.app.buttonImageUrl_3x2_P length] > 0 ? myPoll.app.buttonImageUrl_3x2_P : nil;
+            util_Log(@"[%@ %@] 3x2", _PJ_CLASS, _PJ_METHOD);
         }
     }
     else {
@@ -1020,7 +1022,7 @@
             heightScale = 0.75;
             fontSize=IS_IPHONE?14:30;
             rewardFontSize=IS_IPHONE?14:24;
-            
+            util_Log(@"[%@ %@] 16x9", _PJ_CLASS, _PJ_METHOD);
         }
         else {
             // 3:2
@@ -1031,6 +1033,7 @@
             heightScale = 0.625f;
             fontSize=IS_IPHONE?14:30;
             rewardFontSize=IS_IPHONE?14:24;
+            util_Log(@"[%@ %@] 3x2", _PJ_CLASS, _PJ_METHOD);
         }
     }
     else {

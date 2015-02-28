@@ -1,5 +1,8 @@
 ## Version History
 
+### Version 2.2.2.1
+ - fixed and get the correct aspect ratio for iPhone 6/iPhone 6+
+
 ### Version 2.2.2
  - support custom Tap sound
  - fine tune default close button size and default reward icon to have better UI

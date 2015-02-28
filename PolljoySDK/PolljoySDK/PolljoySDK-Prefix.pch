@@ -13,7 +13,11 @@
     #import "PJPollView.h"
 
     #define IS_IPHONE [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone
-    #define IS_HEIGHT_GTE_568 [[UIScreen mainScreen ] bounds].size.height >= 568.0f
+    #define PJ_SCREEN_WIDTH ([[UIScreen mainScreen] bounds].size.width)
+    #define PJ_SCREEN_HEIGHT ([[UIScreen mainScreen] bounds].size.height)
+    #define PJ_SCREEN_MAX_LENGTH (MAX(PJ_SCREEN_WIDTH, PJ_SCREEN_HEIGHT))
+    #define PJ_SCREEN_MIN_LENGTH (MIN(PJ_SCREEN_WIDTH, PJ_SCREEN_HEIGHT))
+    #define IS_HEIGHT_GTE_568 PJ_SCREEN_MAX_LENGTH >= 568.0f
     #define IS_RETINA ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)] && ([UIScreen mainScreen].scale == 2.0))
     #define IOS7_DELTA_HEIGHT (([[[UIDevice currentDevice] systemVersion] floatValue] >= 7) ? 20:0)
     #define IS_IOS7 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
