@@ -1,5 +1,9 @@
 ## Version History
 
+### Version 3.0
+ - support REST API 3.0
+ - performance improvement
+
 ### Version 2.2.2.1
  - fixed and get the correct aspect ratio for iPhone 6/iPhone 6+
 

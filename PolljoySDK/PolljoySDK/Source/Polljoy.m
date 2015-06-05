@@ -12,8 +12,8 @@
 #import "PJFileDownloader.h"
 
 #define PJ_SDK_NAME @"Polljoy"
-#define PJ_API_SANDBOX_endpoint @"https://apisandbox.polljoy.com/2.2/poll/"
-#define PJ_API_PRODUCTION_endpoint @"https://api.polljoy.com/2.2/poll/"
+#define PJ_API_SANDBOX_endpoint @"https://apisandbox.polljoy.com/3.0/poll/"
+#define PJ_API_PRODUCTION_endpoint @"https://api.polljoy.com/3.0/poll/"
 
 @interface Polljoy (internal) {
     
@@ -21,7 +21,7 @@
 +(NSDictionary *) setChildPolls: (NSDictionary *) childPolls withApp: (PJApp *) app;
 @end
 
-static NSString *_SDKVersion = @"2.2.2.1";
+static NSString *_SDKVersion = @"3.0";
 static NSString *PJ_API_endpoint=PJ_API_PRODUCTION_endpoint;
 static BOOL _isRegisteringSession=NO;
 static BOOL _needsAutoShow=NO;
@@ -35,6 +35,8 @@ static NSString *_deviceId;
 static NSString *_deviceModel;
 static NSString *_devicePlatform;
 static NSString *_deviceOS;
+static BOOL _activeMau;
+static BOOL _mauLimitReached = false;
 
 static PJApp *_app;
 static PJPoll *_currentPoll;
@@ -55,6 +57,9 @@ static NSMutableDictionary *_pollsViews;
 static BOOL _autoshow;
 
 static NSOperationQueue *_backgroundQueue;
+
+static int _getPollRetryCount = 0;
+static int _maxGetPollRetryCount = 20;
 
 @implementation Polljoy
 
@@ -125,63 +130,14 @@ static NSOperationQueue *_backgroundQueue;
                                    NSMutableDictionary *responseObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
                                    
                                    NSNumber *status=[responseObject objectForKey:@"status"];
-                                   NSDictionary *appDict=[responseObject objectForKey:@"app"];
+                                   NSDictionary *sessionDict=[responseObject objectForKey:@"session"];
                                    
                                    if ([status integerValue]==0) {
                                        dispatch_async(dispatch_get_main_queue(), ^{
-                                           _sessionId=[appDict objectForKey:@"sessionId"];
-                                           
-                                           // set app data
-                                           PJApp *app=[[PJApp alloc] init];
-                                           app.appId=[appDict objectForKey:@"id"];
-                                           app.appName=[appDict objectForKey:@"appName"];
-                                           app.defaultImageUrl=[appDict objectForKey:@"defaultImageUrl"];
-                                           app.maximumPollPerSession=[[appDict objectForKey:@"maxPollsPerSession"] integerValue];
-                                           app.maximumPollPerDay=[[appDict objectForKey:@"maxPollsPerDay"] integerValue];
-                                           app.maximumPollInARow=[[appDict objectForKey:@"maxPollsInARow"] integerValue];
-                                           app.backgroundColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"backgroundColor"]];
-                                           app.borderColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"borderColor"]];
-                                           app.buttonColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"buttonColor"]];
-                                           app.fontColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"fontColor"]];
-                                           app.backgroundAlpha=[[appDict objectForKey:@"backgroundAlpha"] integerValue];
-                                           app.backgroundCornerRadius=[[appDict objectForKey:@"backgroundCornerRadius"] integerValue];
-                                           app.borderWidth=[[appDict objectForKey:@"borderWidth"] integerValue];
-                                           app.borderImageUrl_16x9_L=[appDict objectForKey:@"borderImageUrl_16x9_L"];
-                                           app.borderImageUrl_16x9_P=[appDict objectForKey:@"borderImageUrl_16x9_P"];
-                                           app.borderImageUrl_3x2_L=[appDict objectForKey:@"borderImageUrl_3x2_L"];
-                                           app.borderImageUrl_3x2_P=[appDict objectForKey:@"borderImageUrl_3x2_P"];
-                                           app.borderImageUrl_4x3_L=[appDict objectForKey:@"borderImageUrl_4x3_L"];
-                                           app.borderImageUrl_4x3_P=[appDict objectForKey:@"borderImageUrl_4x3_P"];
-                                           app.buttonFontColor=[PolljoyCore colorFromHexString:[appDict objectForKey:@"buttonFontColor"]];
-                                           app.buttonImageUrl_16x9_L=[appDict objectForKey:@"buttonImageUrl_16x9_L"];
-                                           app.buttonImageUrl_16x9_P=[appDict objectForKey:@"buttonImageUrl_16x9_P"];
-                                           app.buttonImageUrl_3x2_L=[appDict objectForKey:@"buttonImageUrl_3x2_L"];
-                                           app.buttonImageUrl_3x2_P=[appDict objectForKey:@"buttonImageUrl_3x2_P"];
-                                           app.buttonImageUrl_4x3_L=[appDict objectForKey:@"buttonImageUrl_4x3_L"];
-                                           app.buttonImageUrl_4x3_P=[appDict objectForKey:@"buttonImageUrl_4x3_P"];
-                                           app.buttonShadow=[[appDict objectForKey:@"buttonShadow"] boolValue];
-                                           app.closeButtonImageUrl=[appDict objectForKey:@"closeButtonImageUrl"];
-                                           app.closeButtonLocation=[[appDict objectForKey:@"closeButtonLocation"] integerValue];
-                                           app.closeButtonOffsetX=[[appDict objectForKey:@"closeButtonOffsetX"] integerValue];
-                                           app.closeButtonOffsetY=[[appDict objectForKey:@"closeButtonOffsetY"] integerValue];
-                                           app.closeButtonEasyClose=[[appDict objectForKey:@"closeButtonEasyClose"] boolValue];
-                                           app.deviceId=[appDict objectForKey:@"deviceId"];
-                                           app.fontName=[appDict objectForKey:@"fontName"];
-                                           app.overlayAlpha=[[appDict objectForKey:@"overlayAlpha"] integerValue];
-                                           app.rewardImageUrl=[appDict objectForKey:@"rewardImageUrl"];
-                                           app.userId=[appDict objectForKey:@"userId"];
-                                           app.imageCornerRadius = [[appDict objectForKey:@"imageCornerRadius"] integerValue];
-                                           app.customSoundUrl=[appDict objectForKey:@"customSoundUrl"];
-                                           app.customTapSoundUrl=[appDict objectForKey:@"customTapSoundUrl"];
-                                           
-                                           _app = app;
-                                           
-                                           _userId = [appDict objectForKey:@"userId"];
-                                           
-                                           [[self class] downloadCustomSound:_app.customSoundUrl];
-                                           [[self class] downloadCustomTapSound:_app.customTapSoundUrl];
-                                           
-                                           [[self class] downloadAppImage:_app.defaultImageUrl];
+                                           _sessionId=[sessionDict objectForKey:@"sessionId"];
+                                           _mauLimitReached=[[responseObject objectForKey:@"mauLimitReached"] boolValue];
+                                           _activeMau=[[sessionDict objectForKey:@"activeMau"] boolValue];
+                                           _userId = [sessionDict objectForKey:@"userId"];
                                            
                                            util_Log(@"[%@ %@] _sessionId: %@", _PJ_CLASS, _PJ_METHOD, _sessionId);
                                            util_Log(@"[%@ %@] _deviceId: %@", _PJ_CLASS, _PJ_METHOD, _deviceId);
@@ -190,7 +146,6 @@ static NSOperationQueue *_backgroundQueue;
                                            util_Log(@"[%@ %@] _devicePlatform: %@", _PJ_CLASS, _PJ_METHOD, _devicePlatform);
                                            util_Log(@"[%@ %@] _session: %lu", _PJ_CLASS, _PJ_METHOD, (unsigned long)_session);
                                            util_Log(@"[%@ %@] _timeSinceInstall: %lu", _PJ_CLASS, _PJ_METHOD, (unsigned long)_timeSinceInstall);
-                                           util_Log(@"[%@ %@] App: %@", _PJ_CLASS, _PJ_METHOD, _app.appName);
                                        });
                                    }
                                    else {
@@ -251,6 +206,7 @@ static NSOperationQueue *_backgroundQueue;
                                  tags:_tags];
     });
 
+    _getPollRetryCount++;
 }
 
 +(void) getPollWithDelegate:(NSObject<PolljoyDelegate> *) delegate
@@ -289,19 +245,45 @@ static NSOperationQueue *_backgroundQueue;
         _delegate=delegate;
         _tags=tags;
         
-        // check if _isRegitseringSession. if yes, delay the request by 1 sec
+        // check if _isRegitseringSession. if yes, delay the request by 3 sec
         if (_isRegisteringSession) {
-            util_Log(@"[%@ %@] _isRegisteringSession, delay poll request for 1 sec", _PJ_CLASS, _PJ_METHOD);
-            [NSTimer scheduledTimerWithTimeInterval:1.0 target:[self class] selector:@selector(schedulePollRequest) userInfo:nil repeats:NO];
+            util_Log(@"[%@ %@] _isRegisteringSession, delay poll request for 2 sec", _PJ_CLASS, _PJ_METHOD);
+            if (_getPollRetryCount < _maxGetPollRetryCount) {
+                [NSTimer scheduledTimerWithTimeInterval:2.0 target:[self class] selector:@selector(schedulePollRequest) userInfo:nil repeats:NO];
+            }
+            else {
+                NSLog(@"%@: Error - Giving up. Retry %d times but still cannot getPoll", PJ_SDK_NAME, _getPollRetryCount);
+                _getPollRetryCount = 0;
+                if ([delegate respondsToSelector:@selector(PJPollNotAvailable:)]) {
+                    [delegate PJPollNotAvailable:PJNoPollFound];
+                }
+            }
         }
-        else if (_appId!=nil) {
+        else if (_appId!=nil && !_mauLimitReached) {
              util_Log(@"[%@ %@] user already set appId. startSession onbehalf. delay poll request for 2 sec", _PJ_CLASS, _PJ_METHOD);
             // user has set appId and userId, try to register for them and delay the request by 2 second
             [[self class] startSession:_appId newSession:NO];
-            [NSTimer scheduledTimerWithTimeInterval:2.0 target:[self class] selector:@selector(schedulePollRequest) userInfo:nil repeats:NO];
+            if (_getPollRetryCount < _maxGetPollRetryCount) {
+                [NSTimer scheduledTimerWithTimeInterval:2.0 target:[self class] selector:@selector(schedulePollRequest) userInfo:nil repeats:NO];
+            }
+            else {
+                NSLog(@"%@: Error - Giving up. Retry %d times but still cannot getPoll", PJ_SDK_NAME, _getPollRetryCount);
+                _getPollRetryCount = 0;
+                if ([delegate respondsToSelector:@selector(PJPollNotAvailable:)]) {
+                    [delegate PJPollNotAvailable:PJNoPollFound];
+                }
+            }
+        }
+        else if (_mauLimitReached) {
+            NSLog(@"%@: MAU Limit Reached", PJ_SDK_NAME);
+            _getPollRetryCount = 0;
+            if ([delegate respondsToSelector:@selector(PJPollNotAvailable:)]) {
+                [delegate PJPollNotAvailable:PJNoPollFound];
+            }
         }
         else {
             NSLog(@"%@: Error - Session Not Registered", PJ_SDK_NAME);
+            _getPollRetryCount = 0;
             if ([delegate respondsToSelector:@selector(PJPollNotAvailable:)]) {
                 [delegate PJPollNotAvailable:PJNoPollFound];
             }
@@ -377,7 +359,8 @@ static NSOperationQueue *_backgroundQueue;
                                    NSNumber *status=[responseObject objectForKey:@"status"];
                                    NSString *message=[responseObject objectForKey:@"message"];
                                    NSArray *pollsArray=[responseObject objectForKey:@"polls"];
-
+                                   NSDictionary *appDict=[responseObject objectForKey:@"app"];
+                                   
                                    if ([status integerValue]==0) {
                                        dispatch_async(dispatch_get_main_queue(), ^{
                                            
@@ -389,10 +372,9 @@ static NSOperationQueue *_backgroundQueue;
                                                
                                                PJPoll *poll=[[PJPoll alloc] initWithRequest:request];
                                                
-                                               // update _app from first record
-                                               if (count == 0) {
-                                                   NSDictionary *appDict=[request objectForKey:@"app"];
-                                                   
+                                               // update _app
+                                               if (count == 0 && (appDict != nil)) {
+                                                   _app=[[PJApp alloc] init];
                                                    _app.appId=[appDict objectForKey:@"id"];
                                                    _app.appName=[appDict objectForKey:@"appName"];
                                                    _app.defaultImageUrl=[appDict objectForKey:@"defaultImageUrl"];
@@ -433,6 +415,10 @@ static NSOperationQueue *_backgroundQueue;
                                                    _app.imageCornerRadius=[[appDict objectForKey:@"imageCornerRadius"] integerValue];
                                                    _app.customSoundUrl=[appDict objectForKey:@"customSoundUrl"];
                                                    _app.customTapSoundUrl=[appDict objectForKey:@"customTapSoundUrl"];
+                                                   
+                                                   [[self class] downloadCustomSound:_app.customSoundUrl];
+                                                   [[self class] downloadCustomTapSound:_app.customTapSoundUrl];
+                                                   //[[self class] downloadAppImage:_app.defaultImageUrl];
                                                }
                                                poll.app =_app;
                                                

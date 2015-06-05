@@ -11,6 +11,8 @@
 
 @property (nonatomic, strong) NSMutableData *activeDownload;
 @property (nonatomic, strong) NSURLConnection *imageConnection;
+@property (nonatomic, strong) NSURL *tmpDirURL;
+@property (nonatomic, strong) NSURL *cachedTempFilenameURL;
 
 @end
 
@@ -19,9 +21,26 @@
 
 - (void)startDownload
 {
+    // check file already cache
+    NSString *hashFileName = [[self.urlString sha1] stringByAppendingString:@".mp3"];
+    self.tmpDirURL = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
+    self.cachedTempFilenameURL = [self.tmpDirURL URLByAppendingPathComponent:hashFileName] ;
+    BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:[self.cachedTempFilenameURL path]];
+    if (fileExists) {
+        util_Log(@"[%@ %@] using cached file: %@ / original url: %@", _PJ_CLASS, _PJ_METHOD, [self.cachedTempFilenameURL path], self.urlString);
+        
+        __block NSURL *fileURL = [self.tmpDirURL URLByAppendingPathComponent:localTempFilename];
+        [[NSFileManager defaultManager] copyItemAtURL:self.cachedTempFilenameURL toURL:fileURL error:nil];
+        // call our delegate and tell it that our icon is ready for display
+        if (self.completionHandler)
+            self.completionHandler(fileURL);
+        
+        return;  // no need to download
+    }
+    
     self.activeDownload = [NSMutableData data];
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:self.urlString] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:self.urlString] cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:60];
     
     // alloc+init and start an NSURLConnection; release on completion/failure
     NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self];
@@ -59,9 +78,11 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     // save to local file
-    NSURL *tmpDirURL = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
-    __block NSURL *fileURL = [tmpDirURL URLByAppendingPathComponent:localTempFilename];
+    __block NSURL *fileURL = [self.tmpDirURL URLByAppendingPathComponent:localTempFilename];
+    [self.activeDownload writeToURL:self.cachedTempFilenameURL atomically:YES];
     [self.activeDownload writeToURL:fileURL atomically:YES];
+    
+    util_Log(@"[%@ %@] saving cached file: %@ / original url: %@", _PJ_CLASS, _PJ_METHOD, [self.cachedTempFilenameURL absoluteString], self.urlString);
     
     self.activeDownload = nil;
     

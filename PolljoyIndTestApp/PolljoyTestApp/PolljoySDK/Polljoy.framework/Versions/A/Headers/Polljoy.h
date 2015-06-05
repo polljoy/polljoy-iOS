@@ -64,6 +64,11 @@
  2015/01/07 Antony Man - UI improvement (show temp msg instead of Thankyou or Collect reward screen), support custom sound when reward user
  Version 2.2
  
+ 2015/02/28 Antony Man - fixed and get the correct aspect ratio for iPhone 6/iPhone 6+ 
+ Version 2.2.2.1
+ 
+ 2015/05/04 - use REST API Version 3
+ Version 3.0
  */
 
 #import <Foundation/Foundation.h>
@@ -75,6 +80,7 @@
 typedef enum {
     PJSuccess=0,
     PJSessionRegistrationFail=1,
+    PJSessionMauLimitReached=2,
     PJNoPollFound=100,
     PNSessionQuotaReached=102,
     PJDailyQuotaReached=103,
